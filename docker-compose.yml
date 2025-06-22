@@ -1,53 +1,50 @@
-            version: '3.8'
+services:
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: tiper_laravel_app_php
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_DATABASE: ${DB_DATABASE:-tiper}
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+    networks:
+      - app-network
 
-            services:
-              app:
-                build:
-                  context: ./docker/php
-                  dockerfile: Dockerfile
-                container_name: tiper_laravel_app_php
-                volumes:
-                  - .:/var/www/html
-                depends_on:
-                  - db
-                environment:
-                  DB_HOST: db
-                  DB_DATABASE: ${DB_DATABASE:-tiper}
-                  DB_USERNAME: ${DB_USERNAME:-root}
-                  DB_PASSWORD: ${DB_PASSWORD:-password}
-                networks:
-                  - app-network
+  nginx:
+    image: nginx:alpine
+    container_name: tiper_laravel_app_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - app-network
 
-              nginx:
-                image: nginx:alpine
-                container_name: tiper_laravel_app_nginx
-                ports:
-                  - "80:80"
-                volumes:
-                  - .:/var/www/html
-                  - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-                depends_on:
-                  - app
-                networks:
-                  - app-network
+  db:
+    image: mysql:8.0
+    container_name: tiper_laravel_app_db
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-tiper}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_USER: ${DB_USERNAME:-root}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - app-network
 
-              db:
-                image: mysql:8.0
-                container_name: tiper_laravel_app_db
-                environment:
-                  MYSQL_DATABASE: ${DB_DATABASE:-tiper}
-                  MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
-                  MYSQL_USER: ${DB_USERNAME:-root}
-                  MYSQL_PASSWORD: ${DB_PASSWORD:-password}
-                volumes:
-                  - dbdata:/var/lib/mysql
-                networks:
-                  - app-network
+networks:
+  app-network:
+    driver: bridge
 
-            networks:
-              app-network:
-                driver: bridge
-
-            volumes:
-              dbdata:
-            
+volumes:
+  dbdata:
