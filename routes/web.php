@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\DugaController; // ★この行を追加★
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -25,10 +27,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/my_combined_page', function () {
         return view('my_combined_page'); // 'my_combined_page' は表示したいBladeファイル名
     })->name('my_combined_page');
-    // ★★★ ここまで追加 ★★★
+    // ★★★ ここまで追加 ★★★   
+});
 
-
-    
+// Subdomain routing for duga.tiper.live
+// ★このブロックを既存のルートの下、require __DIR__.'/auth.php'; の上に追加★
+Route::domain('duga.tiper.live')->group(function () {
+    Route::get('/', [DugaController::class, 'index']);
+    // duga.tiper.live の他のルートもここに追加
+    // 例: Route::get('/products', [DugaController::class, 'products']);
 });
 
 require __DIR__.'/auth.php';

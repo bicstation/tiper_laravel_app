@@ -1,65 +1,68 @@
-<<<<<<< HEAD
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Git-GitHubにプッシュする方法
+このリポジトリに変更を加え、GitHubにプッシュするには、以下の手順を実行してください。
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+git config --global user.email "bicstation@gmail.com"                        
+git config --global user.name "bicstation"
 
-## About Laravel
+1. リポジトリをクローンする
+まず、このリポジトリをローカル環境にクローンします。ターミナルまたはコマンドプロンプトで以下のコマンドを実行してください。
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Bash
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+git clone [リポジトリのURL]
+例：
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Bash
 
-## Learning Laravel
+git clone https://github.com/your-username/your-repository-name.git
+2. 変更を加える
+クローンしたリポジトリのディレクトリに移動し、必要な変更を加えます。
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Bash
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+cd [リポジトリ名]
+3. 変更をステージングする
+変更をコミットするために、まず変更をステージングエリアに追加します。
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+すべての変更を追加する場合:
+Bash
 
-## Laravel Sponsors
+git add .
+特定のファイルを追加する場合:
+Bash
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+git add [ファイル名]
+4. 変更をコミットする
+ステージングした変更をコミットします。コミットメッセージは、行った変更がわかるように具体的に記述してください。
 
-### Premium Partners
+Bash
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+git commit -m "あなたのコミットメッセージ"
+例：
 
-## Contributing
+Bash
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+git commit -m "READMEにプッシュ方法を追加"
+5. GitHubにプッシュする
+ローカルの変更をGitHubのリモートリポジトリにプッシュします。通常はmainまたはmasterブランチにプッシュします。
 
-## Code of Conduct
+Bash
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+git push origin [ブランチ名]
+例：
 
-## Security Vulnerabilities
+Bash
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+git push origin main
+READMEに含めると良い追加情報
+上記の基本的な手順に加えて、以下のような情報をREADMEに含めると、より親切なドキュメントになります。
 
-## License
+前提条件: Gitがインストールされていること、GitHubアカウントを持っていることなどを記載すると良いでしょう。
+新しいブランチでの作業: 直接mainブランチにプッシュするのではなく、新しいブランチを作成して作業し、プルリクエストを送るワークフローを推奨する場合、その手順も記載します。
+git checkout -b [新しいブランチ名]
+git push origin [新しいブランチ名]
+GitHub上でのプルリクエスト作成方法への言及
+コンフリクトの解決: 複数人で開発を行う場合、コンフリクトが発生する可能性があるため、その解決方法について簡単に触れるか、関連ドキュメントへのリンクを提供すると良いでしょう。
+認証情報: 最初にプッシュする際にGitHubのユーザー名とパスワード（またはPersonal Access Token）の入力を求められることについて言及しておくと、ユーザーが戸惑わずに済みます。
+この例文を参考に、あなたのリポジトリの状況に合わせて適宜調整してご活用ください。
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-=======
-# tiper_laravel_app
->>>>>>> 74b7be66a642c4289590e8b6225421cab1dbf0f4
