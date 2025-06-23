@@ -39,8 +39,8 @@ services:
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-tiper}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
-      #MYSQL_USER: ${DB_USERNAME:-root}
-      #MYSQL_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_USER: ${DB_USERNAME:-root}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
     volumes:
       - dbdata:/var/lib/mysql
     networks:
