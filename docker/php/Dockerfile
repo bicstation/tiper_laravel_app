@@ -24,6 +24,10 @@ RUN docker-php-ext-install pdo pdo_mysql opcache gd exif \
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # ===============================================
+# Node.js と npm のインストール (この2行をここに追加してください)
+RUN apk add --no-cache nodejs npm
+# ===============================================
+
 # Python関連のインストール
 # Alpine Linux のパッケージマネージャー 'apk' を使用
 RUN apk add --no-cache python3 py3-pip
