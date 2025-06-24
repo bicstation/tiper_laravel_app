@@ -1,24 +1,27 @@
 {{-- resources/views/layouts/header.blade.php --}}
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark w-100">
     <div class="container-fluid">
-        <a class="navbar-brand d-none d-md-block" href="{{ url('/') }}">
-            <img src="{{ asset('img/logo.png') }}" alt="Tiper.Live Logo" height="30" class="me-2">Tiper.Live
+        {{-- デスクトップ用ブランドロゴとタイトル --}}
+        <a class="navbar-brand d-none d-md-flex align-items-center" href="{{ url('/') }}">
+            <img src="{{ asset('img/logo.webp') }}" alt="Tiper.Live Logo" height="30" class="me-2">
+            <span class="fw-bold">Tiper.Live</span> {{-- ロゴの隣にタイトルを追加しました --}}
         </a>
+        {{-- モバイル用ブランドロゴ --}}
         <a class="navbar-brand d-md-none" href="{{ url('/') }}">
-            <img src="{{ asset('img/logo.png') }}" alt="Tiper.Live Logo" height="30">
+            <img src="{{ asset('img/logo.webp') }}" alt="Tiper.Live Logo" height="30">
         </a>
-
-        {{-- スマホ版サイドバー開閉ボタン (Offcanvasトリガー) --}}
+        
+        {{-- モバイル用オフキャンバスサイドバートグルボタン --}}
         <button class="btn btn-primary d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#myCustomSidebar" aria-controls="myCustomSidebar">
             <i class="fas fa-bars"></i>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                {{-- ナビゲーションメニュー項目は navi.blade.php に移動しました --}}
+                {{-- ここにナビゲーション項目を追加できますが、通常はメインナビに任せる --}}
             </ul>
-            {{-- PC版検索フォーム --}}
+            {{-- デスクトップ用検索フォーム --}}
             <form class="d-none d-md-inline-flex ms-auto">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="検索..." aria-label="検索">
@@ -26,32 +29,31 @@
                 </div>
             </form>
         </div>
-
+        
+        {{-- ログイン/登録ボタン（常に表示） --}}
         <div class="d-flex align-items-center ms-auto ms-md-3">
             @auth
-                {{-- ログイン済みユーザーの場合 --}}
                 <div class="dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->name }}
+                    <a class="btn btn-outline-light dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-2"></i>{{ Auth::user()->name }}
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{{ url('/profile') }}">プロフィール</a></li>
-                        <li><a class="dropdown-item" href="{{ url('/dashboard') }}">ダッシュボード</a></li>
-                        <li><hr class="dropdown-divider"></li>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="fas fa-user-circle me-2"></i>プロフィール</a></li>
                         <li>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="dropdown-item">ログアウト</button>
+                                <a class="dropdown-item" href="route('logout')"
+                                   onclick="event.preventDefault();
+                                            this.closest('form').submit();">
+                                    <i class="fas fa-sign-out-alt me-2"></i>ログアウト
+                                </a>
                             </form>
                         </li>
                     </ul>
                 </div>
             @else
-                {{-- 未ログインユーザーの場合 --}}
                 <a href="{{ route('login') }}" class="btn btn-outline-light me-2">ログイン</a>
-                @if (Route::has('register'))
-                    <a href="{{ route('register') }}" class="btn btn-primary">登録</a>
-                @endif
+                <a href="{{ route('register') }}" class="btn btn-primary">登録</a>
             @endauth
         </div>
     </div>

@@ -24,9 +24,12 @@ LOG_LEVEL=debug
 DB_CONNECTION=mysql
 DB_HOST=34.84.129.106 # ★ここをCloud SQLの公開IPアドレスに設定
 DB_PORT=3306
-DB_DATABASE=tiper # ★Cloud SQLで作成したデータベース名に合わせてください (例: tiper)
-DB_USERNAME=root # ★Cloud SQLで設定したユーザー名に合わせてください (推奨はroot以外)
-DB_PASSWORD=あなたがCloud SQLで設定したパスワード # ★Cloud SQLで設定したパスワードに合わせてください
+DB_DATABASE=tiper
+# ★Cloud SQLで作成したデータベース名に合わせてください (例: tiper)
+DB_USERNAME=root
+# ★Cloud SQLで設定したユーザー名に合わせてください (推奨はroot以外)
+DB_PASSWORD=1492nabe
+# ★Cloud SQLで設定したパスワードに合わせてください
 
 # データベース以外の設定も、ファイルベースに戻すことで確実性を高めます
 SESSION_DRIVER=file

@@ -1,3 +1,7 @@
+Dockerで起動する方法
+docker-compose down
+docker-compose up -d --build
+
 Git-GitHubにプッシュする方法
 このリポジトリに変更を加え、GitHubにプッシュするには、以下の手順を実行してください。
 

@@ -1,4 +1,21 @@
-<x-app-layout>
+{{-- resources/views/welcome.blade.php --}}
+
+@extends('layouts.app') {{-- layouts.app をマスターレイアウトとして継承 --}}
+
+@section('content') {{-- app.blade.php の @yield('content') に挿入されるコンテンツをここに記述 --}}
+<div class="container-fluid bg-white p-4 rounded shadow-sm mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light p-3 rounded shadow-sm">
+            <li class="breadcrumb-item"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i>ホーム</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fas fa-file me-1"></i>Welcomeページ
+            </li>
+        </ol>
+    </nav>
+    <h1 class="mb-4"><i class="fas fa-star me-2"></i>ようこそ！Tiper.Liveへ</h1>
+    <p>このページは、あなたのLaravelアプリケーションのトップページです。サイドバーが正しく表示されることを確認しましょう。</p>
+
+    {{-- 元々の Laravel のデフォルトコンテンツをここに含める --}}
     <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
         @if (Route::has('login'))
             <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">
@@ -79,7 +96,6 @@
                         <div>
                             <div class="h-16 w-16 flex items-center justify-center rounded-full bg-red-50 dark:bg-red-800/20">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="w-7 h-7 stroke-red-500"><path stroke-linecap="round" stroke-linejoin="round" d="M6.004 15.495H3.844v-4.07h2.16M15.467 15.495h-2.16v-4.07h2.16M12 15.495h-2.16v-4.07h2.16M18.966 15.495h-2.16v-4.07h2.16M3.844 19.33H1V7.82h2.844M11.28 19.33H8.435V7.82h2.844M18.966 19.33h-2.844V7.82h2.844M23 19.33h-2.16V7.82H23M12 3.84V1h-2.16v2.84M23 3.84V1h-2.16v2.84M18.966 3.84V1h-2.16v2.84M6.004 3.84V1H3.844v2.84Z" />
-                                </svg>
                             </div>
 
                             <h2 class="mt-8 text-xl font-semibold text-gray-900 dark:text-white">Vibrant Laravel</h2>
@@ -114,4 +130,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection
