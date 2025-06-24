@@ -15,6 +15,12 @@ use App\Http\Controllers\DugaController; // ★この行はそのまま
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+// routes/web.php のどこか、他のルート定義の下あたりに追加
+Route::get('/test-accordion', function () {
+    return view('test_accordion');
+});
+
+
 
 // ★★★ ここから移動/追加 ★★★
 // Subdomain routing for duga.tipers.live を他のルートよりも一番上に配置
@@ -50,3 +56,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+

@@ -11,13 +11,17 @@
     <link rel="icon" href="{{ asset('img/logo.webp') }}"> 
 
     {{-- Font Awesome の CDN 読み込み --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css)">
 
-    {{-- asset() ヘルパーで public/css/style_v2.css を参照 (カスタムスタイル) --}}
+    {{-- Bootstrap CSS (Viteを使わずにCDNから読み込む) --}}
+    {{-- ★ここを xintegrity から integrity に修正しました --}}
+    <link href="[https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css)" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    {{-- カスタムCSS (public/css/style_v2.css) --}}
     <link href="{{ asset('css/style_v2.css') }}" rel="stylesheet"> 
 
-    {{-- Viteアセットを読み込むためのディレクティブ (resources/css/app.css と resources/js/app.js を含む) --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Vite CSSアセットのみをここで読み込む --}}
+    @vite(['resources/css/app.css'])
 
     {{-- ここに、追加のインラインスタイルを記述します。 --}}
     <style>
@@ -44,7 +48,7 @@
             display: flex;
             flex-direction: column;
             flex-grow: 1; 
-            /* 幅の計算はFlexboxが自動で行うため、不要な calc() を削除 */
+            width: calc(100% - 280px); 
             overflow-x: hidden; 
         }
         
@@ -71,35 +75,23 @@
         .accordion-button:focus {
             box-shadow: none; 
         }
-        
-        /* メインナビとヘッダーナビの表示/非表示制御 */
-        /* mdサイズ以上で navi (青) は常に表示、header (黒) は常に表示 */
-        /* mdサイズ未満で navi (青) はトグルで表示、header (黒) はトグルで非表示にせず固定ヘッダーとして機能 */
-        .navbar-collapse:not(.d-md-none) { /* d-md-none を持たない (つまりデスクトップ表示の) navbar-collapse */
-            display: flex !important; /* flex にしてアイテムが横並びになるように */
-            flex-grow: 1; /* スペースを占有 */
+        /* メインナビが常に表示されるように調整 (Bootstrapのデフォルト動作で非表示になるのを防ぐため) */
+        /* d-md-none と連携してデスクトップで表示、モバイルで非表示にする */
+        .navbar-collapse.collapse:not(.d-md-none) {
+            display: block !important;
         }
-        .navbar-toggler:not(.d-md-none) { /* d-md-none を持たない navbar-toggler */
-            display: none !important; /* デスクトップでは非表示 */
+        .navbar-toggler:not(.d-md-none) {
+            display: none !important; 
         }
-        @media (max-width: 767.98px) { /* md未満の画面サイズ (モバイル) */
-            .navbar-collapse:not(.d-md-none) {
-                display: none !important; /* モバイルではデフォルトで非表示 */
-            }
-            .navbar-toggler:not(.d-md-none) {
-                display: block !important; /* モバイルでは表示 */
-            }
-            /* デスクトップ用の固定サイドバーをモバイルで非表示 */
-            aside.d-md-block {
+        @media (max-width: 767.98px) { /* md未満の画面サイズ */
+            .navbar-collapse.collapse:not(.d-md-none) {
                 display: none !important; 
             }
-            /* メインコンテンツエリアのflex-directionをcolumnにして縦積みに変更 */
-            #main-content-area {
-                flex-direction: column;
+            .navbar-toggler:not(.d-md-none) {
+                display: block !important; 
             }
-            /* メインコンテンツラッパーも幅100%に */
-            #main-content-wrapper {
-                width: 100%;
+            aside.d-md-block {
+                display: none !important; 
             }
         }
     </style>
@@ -111,7 +103,7 @@
     {{-- メインナビゲーション (ページの最上部) --}}
     @include('layouts.navi')
 
-    {{-- ヘッダーナビゲーション (その下) --}}
+    {{-- ヘッダーナビゲーション --}}
     @include('layouts.header')
 
     {{-- メインコンテンツ領域（サイドバーと、その隣にコンテンツ） --}}
@@ -129,6 +121,7 @@
 
         {{-- サイドバーの隣に配置されるメインコンテンツラッパー --}}
         <div id="main-content-wrapper">
+            {{-- メインナビがトップに移動したので、ここには不要です --}}
             <main class="p-3"> {{-- メインコンテンツにパディングを追加 --}}
                 {{-- 各ページ固有のコンテンツがここに挿入されます --}}
                 @yield('content')

@@ -7,9 +7,8 @@
     したがって、外側のラッパー要素（例: <div class="sidebar">）は含めません。
 --}}
 
-{{-- サイドバーの項目リスト --}}
+{{-- サイドバーの項目リスト (アコーディオンではない直接のリンク) --}}
 <ul class="list-unstyled mb-0">
-    {{-- 通常のホームリンク（アコーディオンではありません） --}}
     <li>
         {{-- tiper.live のトップページの場合のみ active --}}
         <a class="nav-link text-white py-2 {{ Request::is('/') && Request::getHost() === 'tiper.live' ? 'active' : '' }}" href="{{ url('/') }}">
@@ -34,12 +33,12 @@
     {{-- Dugaジャンル --}}
     <div class="accordion-item bg-dark">
         <h2 class="accordion-header" id="headingDugaGenres">
-            {{-- Dugaドメインのどのページでも開くように、activeは設定しないか、より広範な条件にする --}}
+            {{-- アコーディオン機能を有効に戻す --}}
             <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDugaGenres" aria-expanded="false" aria-controls="collapseDugaGenres">
                 <i class="fas fa-video me-2"></i>Dugaジャンル
             </button>
         </h2>
-        {{-- data-bs-parent を動的に設定 --}}
+        {{-- アコーディオン機能を有効に戻す --}}
         <div id="collapseDugaGenres" class="accordion-collapse collapse" aria-labelledby="headingDugaGenres" data-bs-parent="#{{ $accordionId }}">
             <div class="accordion-body bg-dark">
                 <ul class="list-unstyled mb-0">
@@ -64,12 +63,12 @@
     {{-- カテゴリ 1 --}}
     <div class="accordion-item bg-dark">
         <h2 class="accordion-header" id="headingCategory1">
-            <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory1" aria-expanded="false" aria-controls="collapseCategory1">
+            {{-- アコーディオン機能を有効に戻す (初期状態で開く) --}}
+            <button class="accordion-button bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory1" aria-expanded="true" aria-controls="collapseCategory1">
                 <i class="fas fa-folder me-2"></i>カテゴリ 1
             </button>
         </h2>
-        {{-- data-bs-parent を動的に設定 --}}
-        {{-- 初期表示で開いておく場合は 'show' クラスを追加 --}}
+        {{-- アコーディオン機能を有効に戻す (初期状態で開く) --}}
         <div id="collapseCategory1" class="accordion-collapse collapse show" aria-labelledby="headingCategory1" data-bs-parent="#{{ $accordionId }}">
             <div class="accordion-body bg-dark">
                 <ul class="list-unstyled mb-0">
@@ -86,11 +85,12 @@
     {{-- カテゴリ 2 --}}
     <div class="accordion-item bg-dark">
         <h2 class="accordion-header" id="headingCategory2">
+            {{-- アコーディオン機能を有効に戻す (初期状態で閉じる) --}}
             <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory2" aria-expanded="false" aria-controls="collapseCategory2">
                 <i class="fas fa-folder me-2"></i>カテゴリ 2
             </button>
         </h2>
-        {{-- data-bs-parent を動的に設定 --}}
+        {{-- アコーディオン機能を有効に戻す (初期状態で閉じる) --}}
         <div id="collapseCategory2" class="accordion-collapse collapse" aria-labelledby="headingCategory2" data-bs-parent="#{{ $accordionId }}">
             <div class="accordion-body bg-dark">
                 <ul class="list-unstyled mb-0">
@@ -103,11 +103,12 @@
     {{-- 認証 --}}
     <div class="accordion-item bg-dark">
         <h2 class="accordion-header" id="headingAuth">
+            {{-- アコーディオン機能を有効に戻す (初期状態で閉じる) --}}
             <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAuth" aria-expanded="false" aria-controls="collapseAuth">
                 <i class="fas fa-lock me-2"></i>認証
             </button>
         </h2>
-        {{-- data-bs-parent を動的に設定 --}}
+        {{-- アコーディオン機能を有効に戻す (初期状態で閉じる) --}}
         <div id="collapseAuth" class="accordion-collapse collapse" aria-labelledby="headingAuth" data-bs-parent="#{{ $accordionId }}">
             <div class="accordion-body bg-dark">
                 <ul class="list-unstyled mb-0">

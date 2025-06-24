@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>純粋なBootstrap CDNテスト</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body { padding: 20px; }
+        .container { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bootstrap CDN テスト</h1>
+        <p>このページはLaravelに依存せず、直接CDNからBootstrapを読み込んでいます。</p>
+
+        <h2>ツールチップテスト</h2>
+        <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="ツールチップが表示されますか？">
+            マウスを合わせてください
+        </button>
+        <p class="mt-2">ボタンにマウスを合わせると、ツールチップが表示されるはずです。</p>
+
+        <h2 class="mt-5">アコーディオンテスト</h2>
+        <div class="accordion" id="pureAccordionTest">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="pureHeadingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#pureCollapseOne" aria-expanded="true" aria-controls="pureCollapseOne">
+                        アコーディオン項目 1 (初期状態: 開)
+                    </button>
+                </h2>
+                <div id="pureCollapseOne" class="accordion-collapse collapse show" aria-labelledby="pureHeadingOne" data-bs-parent="#pureAccordionTest">
+                    <div class="accordion-body">
+                        <strong>これは項目 1 のコンテンツです。</strong> このテキストが常に表示され、クリックで閉じられるか確認してください。
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="pureHeadingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pureCollapseTwo" aria-expanded="false" aria-controls="pureCollapseTwo">
+                        アコーディオン項目 2 (初期状態: 閉)
+                    </button>
+                </h2>
+                <div id="pureCollapseTwo" class="accordion-collapse collapse" aria-labelledby="pureHeadingTwo" data-bs-parent="#pureAccordionTest">
+                    <div class="accordion-body">
+                        <strong>これは項目 2 のコンテンツです。</strong> クリックで開閉できるか確認してください。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JavaScript Bundle with Popper CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // ツールチップの初期化
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            // アコーディオンはdata属性で自動的に機能するはずですが、明示的な初期化も可能
+        });
+    </script>
+</body>
+</html>
