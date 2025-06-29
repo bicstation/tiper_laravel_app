@@ -22,7 +22,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./docker/nginx:/etc/nginx/conf.d/:ro # この行が ./docker/nginx となっているか？
+      - ./docker/nginx:/etc/nginx/conf.d/:ro
       - .:/var/www/html
     depends_on:
       - app
@@ -34,9 +34,9 @@ services:
     container_name: tiper_laravel_app_db
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-tiper}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
-      MYSQL_USER: ${DB_USERNAME:-root}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password} # ★この行は残す
+      # MYSQL_USER: ${DB_USERNAME:-root} # ★この行は削除
+      # MYSQL_PASSWORD: ${DB_PASSWORD:-password} # ★この行は削除
     volumes:
       - dbdata:/var/lib/mysql
     networks:

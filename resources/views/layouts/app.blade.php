@@ -11,17 +11,17 @@
     <link rel="icon" href="{{ asset('img/logo.webp') }}"> 
 
     {{-- Font Awesome の CDN 読み込み --}}
-    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css)">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     {{-- Bootstrap CSS (Viteを使わずにCDNから読み込む) --}}
-    {{-- ★ここを xintegrity から integrity に修正しました --}}
-    <link href="[https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css)" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    {{-- ★resources/css/app.css で読み込むため、この行は削除またはコメントアウトしてもOKですが、今回はCDNを優先する形で残します --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     {{-- カスタムCSS (public/css/style_v2.css) --}}
     <link href="{{ asset('css/style_v2.css') }}" rel="stylesheet"> 
 
-    {{-- Vite CSSアセットのみをここで読み込む --}}
-    @vite(['resources/css/app.css'])
+    {{-- Vite CSSアセットとJavaScriptアセットをここでまとめて読み込む！ --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- ここに、追加のインラインスタイルを記述します。 --}}
     <style>
@@ -102,9 +102,6 @@
 <body class="font-sans antialiased">
     {{-- メインナビゲーション (ページの最上部) --}}
     @include('layouts.navi')
-
-    {{-- ヘッダーナビゲーション --}}
-    @include('layouts.header')
 
     {{-- メインコンテンツ領域（サイドバーと、その隣にコンテンツ） --}}
     <div id="main-content-area">

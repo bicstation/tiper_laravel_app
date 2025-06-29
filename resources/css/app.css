@@ -1,6 +1,6 @@
 @import 'bootstrap/dist/css/bootstrap.css';
 
-/* Tailwind CSS の設定がここにある場合もあります */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind CSS の設定を一時的にコメントアウト */
+/* @tailwind base; */
+/* @tailwind components; */
+/* @tailwind utilities; */
