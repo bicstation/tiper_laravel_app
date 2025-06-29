@@ -1,24 +1,39 @@
-*.log
-.DS_Store
+# Laravel Default
+/vendor
+/node_modules
 .env
 .env.backup
-.env.production
-.phpactor.json
 .phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
-/node_modules
-/public/build
 /public/hot
 /public/storage
-/storage/*.key
-/storage/pail
-/vendor
-Homestead.json
-Homestead.yaml
+/public/build
+npm-debug.log
+yarn-error.log
+
+# IDE and Editor Specific
+/.idea
+.vscode/
+/.history
+.DS_Store
 Thumbs.db
+.phpactor.json # Add: PHPactor configuration
+/.fleet         # Add: Fleet IDE configuration
+/.nova          # Add: Nova IDE configuration
+/.zed           # Add: Zed editor configuration
+
+# Environment and Credentials
+.env -hone-pc   # Add: Specific .env backup
+.env.production # Add: Production environment file (if not managed by Git)
+/auth.json      # Add: Composer auth.json (contains credentials)
+
+# Local Development / Homestead / Sail related
+Homestead.json  # Add: Homestead configuration
+Homestead.yaml  # Add: Homestead configuration
+/storage/pail   # Add: Laravel Pail logs
+
+# WordPress Specific
+/wordpress/wp-content/debug.log # WordPress debug log
+/wordpress/wp-content/cache/    # WordPress cache directory
+/wordpress/wp-content/uploads/  # WordPress uploads directory (user files)
+/wordpress/wp-content/upgrades/ # WordPress upgrade directory
+/.phpunit.cache                 # Add: PHPUnit cache directory

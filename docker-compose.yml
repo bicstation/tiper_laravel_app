@@ -1,11 +1,12 @@
 services:
-  app:
+  app: # Laravel PHP-FPM サービス
     build:
       context: ./docker/php
       dockerfile: Dockerfile
     container_name: tiper_laravel_app_php
     volumes:
-      - .:/var/www/html
+      - .:/var/www/html # Laravelのルート
+      - ./wordpress:/var/www/wordpress # WordPressのファイルをPHPコンテナにもマウント
     depends_on:
       - db
     environment:
@@ -16,29 +17,59 @@ services:
     networks:
       - app-network
 
-  nginx:
+  nginx: # Nginx サービス (LaravelとWordPressの両方を処理)
     image: nginx:alpine
     container_name: tiper_laravel_app_nginx
     ports:
       - "80:80"
     volumes:
-      - ./docker/nginx:/etc/nginx/conf.d/:ro
-      - .:/var/www/html
+      # custom_conf ディレクトリ全体をNginxの設定ディレクトリにマウント
+      - ./docker/nginx/custom_conf/:/etc/nginx/conf.d/:ro # これにより、default.confは存在しなくなります
+      - .:/var/www/html # Laravelプロジェクトルートのマウント
+      - ./wordpress:/var/www/wordpress # WordPressファイルのパスをマウント
     depends_on:
       - app
+      - wordpress # WordPressサービスへの依存も追加
     networks:
       - app-network
+    # ★以前のcommand行はここから削除されています★
 
-  db:
+  db: # Laravel用MySQLデータベース
     image: mysql:8.0
     container_name: tiper_laravel_app_db
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-tiper}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password} # ★この行は残す
-      # MYSQL_USER: ${DB_USERNAME:-root} # ★この行は削除
-      # MYSQL_PASSWORD: ${DB_PASSWORD:-password} # ★この行は削除
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
     volumes:
       - dbdata:/var/lib/mysql
+    networks:
+      - app-network
+
+  wordpress: # WordPress PHP-FPM サービス
+    image: wordpress:latest # WordPressの公式イメージを使用
+    container_name: tiper_wordpress_app
+    environment:
+      WORDPRESS_DB_HOST: wordpress_db:3306 # WordPressデータベースサービスのホスト名とポート
+      WORDPRESS_DB_USER: wordpress        # WordPressデータベースのユーザー名
+      WORDPRESS_DB_PASSWORD: password     # WordPressデータベースのパスワード
+      WORDPRESS_DB_NAME: wordpress_db     # WordPressデータベース名
+    volumes:
+      - ./wordpress:/var/www/html # ローカルの ./wordpress ディレクトリをコンテナのWebルートにマウント
+    depends_on:
+      - wordpress_db # WordPressデータベースに依存
+    networks:
+      - app-network
+
+  wordpress_db: # WordPress用MySQLデータベース
+    image: mysql:8.0
+    container_name: tiper_wordpress_db
+    environment:
+      MYSQL_ROOT_PASSWORD: password     # ルートユーザーのパスワード
+      MYSQL_DATABASE: wordpress_db      # データベース名
+      MYSQL_USER: wordpress             # WordPress接続用ユーザー名
+      MYSQL_PASSWORD: password          # WordPress接続用パスワード
+    volumes:
+      - wordpress_db_data:/var/lib/mysql # WordPressデータベースのデータを永続化
     networks:
       - app-network
 
@@ -47,4 +78,5 @@ networks:
     driver: bridge
 
 volumes:
-  dbdata:
+  dbdata: # Laravel用データベースボリューム
+  wordpress_db_data: # WordPress用データベースボリューム
