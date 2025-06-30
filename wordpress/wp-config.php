@@ -75,14 +75,14 @@ define( 'DB_COLLATE', getenv_docker('WORDPRESS_DB_COLLATE', '') );
  *
  * @since 2.6.0
  */
-define( 'AUTH_KEY',         getenv_docker('WORDPRESS_AUTH_KEY',         '9f8c3080404eee4ddff99ef706541dd89adb97f8') );
-define( 'SECURE_AUTH_KEY',  getenv_docker('WORDPRESS_SECURE_AUTH_KEY',  '708b2403dbbb1849e6cf0aa50a0a2dac0be6d73c') );
-define( 'LOGGED_IN_KEY',    getenv_docker('WORDPRESS_LOGGED_IN_KEY',    '6e17d9b15f0b5964c43de7ccd0e2f39656bea960') );
-define( 'NONCE_KEY',        getenv_docker('WORDPRESS_NONCE_KEY',        'd70c539fe49da35018b65f2f86e6d126edb95665') );
-define( 'AUTH_SALT',        getenv_docker('WORDPRESS_AUTH_SALT',        '9a316276194edb16a29eefa0430919cc2b11f047') );
-define( 'SECURE_AUTH_SALT', getenv_docker('WORDPRESS_SECURE_AUTH_SALT', 'e342e04be2d6bd9ad579762637fd60b5d7ebe732') );
-define( 'LOGGED_IN_SALT',   getenv_docker('WORDPRESS_LOGGED_IN_SALT',   'bdadd0470ce1cf05153eaa55da90562b3cec0062') );
-define( 'NONCE_SALT',       getenv_docker('WORDPRESS_NONCE_SALT',       '94388f3e68768be2ee2c8068d1bb7896e75a081f') );
+define( 'AUTH_KEY',         getenv_docker('WORDPRESS_AUTH_KEY',         'fe824118341c3aaba68013c021d4e50d9bd21698') );
+define( 'SECURE_AUTH_KEY',  getenv_docker('WORDPRESS_SECURE_AUTH_KEY',  'bd5d1f4256ed86c3a22f984b5059695bf2c63609') );
+define( 'LOGGED_IN_KEY',    getenv_docker('WORDPRESS_LOGGED_IN_KEY',    '6857c678d55f3fcf44f0c42df22a202b34bba2b0') );
+define( 'NONCE_KEY',        getenv_docker('WORDPRESS_NONCE_KEY',        '4d66779d883519d0d5239574e55af704e964fadf') );
+define( 'AUTH_SALT',        getenv_docker('WORDPRESS_AUTH_SALT',        '6d5c5201e79c7c9f1cc7abb324ae88ff4b4d0276') );
+define( 'SECURE_AUTH_SALT', getenv_docker('WORDPRESS_SECURE_AUTH_SALT', '3dddd69b610504c8c9483c52b5bcb9c807519bae') );
+define( 'LOGGED_IN_SALT',   getenv_docker('WORDPRESS_LOGGED_IN_SALT',   '6e107de92282eb5898904912cf32a93245174f64') );
+define( 'NONCE_SALT',       getenv_docker('WORDPRESS_NONCE_SALT',       'e00df29248a90bc3513b324bceb21991804771ba') );
 // (See also https://wordpress.stackexchange.com/a/152905/199287)
 
 /**#@-*/
@@ -127,27 +127,6 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strpos($_SERVER['HTTP_X_FORWARD
 if ($configExtra = getenv_docker('WORDPRESS_CONFIG_EXTRA', '')) {
 	eval($configExtra);
 }
-
-  // Debugging settings
-    define('WP_DEBUG', true);         // デバッグモードを有効化
-    define('WP_DEBUG_LOG', true);     // エラーを wp-content/debug.log に記録
-    define('WP_DEBUG_DISPLAY', false); // エラーを画面に表示しない（画面を汚さないため）
-    define('SCRIPT_DEBUG', false);     // JavaScript/CSSのデバッグを無効化
-    define('SAVEQUERIES', false);      // データベースクエリの保存を無効化
-
-// define('WP_DEFAULT_THEME', 'twentytwentyfour'); // または twentytwentythree など、利用可能なデフォルトテーマ名
-
-    /* That's all, stop editing! Happy publishing. */
-
-    /** Absolute path to the WordPress directory. */
-    if ( !defined('ABSPATH') )
-        define('ABSPATH', dirname(__FILE__) . '/');
-
-    /** Sets up WordPress vars and included files. */
-    require_once(ABSPATH . 'wp-settings.php');
-    
-
-
 
 /* That's all, stop editing! Happy publishing. */
 

@@ -24,7 +24,7 @@ RUN docker-php-ext-install pdo pdo_mysql opcache gd exif \
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # ===============================================
-# Node.js と npm のインストール (この2行をここに追加してください)
+# Node.js と npm のインストール
 RUN apk add --no-cache nodejs npm
 # ===============================================
 

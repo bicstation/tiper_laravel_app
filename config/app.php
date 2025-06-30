@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Tokyo', // ★ここを 'Asia/Tokyo' に変更
 
     /*
     |--------------------------------------------------------------------------
@@ -122,5 +122,18 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Log Channel
+    |--------------------------------------------------------------------------
+    |
+    | This option determines the default log channel that is used to write
+    | messages. The default logging setup is designed to work well for
+    | both small and large applications. You may change it here.
+    |
+    */
+
+    'log_channel' => env('LOG_CHANNEL', 'stderr'), // ★ここを 'stderr' に変更する！
 
 ];

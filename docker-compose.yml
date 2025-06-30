@@ -7,8 +7,11 @@ services:
     volumes:
       - .:/var/www/html # Laravelのルート
       - ./wordpress:/var/www/wordpress # WordPressのファイルをPHPコンテナにもマウント
+      - ./.env.local:/var/www/html/.env # ホストの.env.localをコンテナの.envとしてマウント
     depends_on:
       - db
+    env_file:
+      - ./.env.local # .env.local を使用（Laravelアプリ用）
     environment:
       DB_HOST: db
       DB_DATABASE: ${DB_DATABASE:-tiper}
@@ -23,16 +26,17 @@ services:
     ports:
       - "80:80"
     volumes:
-      # custom_conf ディレクトリ全体をNginxの設定ディレクトリにマウント
-      - ./docker/nginx/custom_conf/:/etc/nginx/conf.d/:ro # これにより、default.confは存在しなくなります
+      - ./docker/nginx/custom_conf/:/etc/nginx/conf.d/:ro # custom_conf ディレクトリ全体をNginxの設定ディレクトリにマウント
       - .:/var/www/html # Laravelプロジェクトルートのマウント
       - ./wordpress:/var/www/wordpress # WordPressファイルのパスをマウント
     depends_on:
-      - app
-      - wordpress # WordPressサービスへの依存も追加
+      app:
+        condition: service_started
+      wordpress: # WordPressサービスへの依存を強化
+        condition: service_healthy # service_healthy を使用
     networks:
       - app-network
-    # ★以前のcommand行はここから削除されています★
+    restart: on-failure
 
   db: # Laravel用MySQLデータベース
     image: mysql:8.0
@@ -49,29 +53,54 @@ services:
     image: wordpress:latest # WordPressの公式イメージを使用
     container_name: tiper_wordpress_app
     environment:
-      WORDPRESS_DB_HOST: wordpress_db:3306 # WordPressデータベースサービスのホスト名とポート
-      WORDPRESS_DB_USER: wordpress        # WordPressデータベースのユーザー名
-      WORDPRESS_DB_PASSWORD: password     # WordPressデータベースのパスワード
-      WORDPRESS_DB_NAME: wordpress_db     # WordPressデータベース名
+      WORDPRESS_DB_HOST: wordpress_db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: password
+      WORDPRESS_DB_NAME: wordpress_db
+      WORDPRESS_LANG: ja
+
+      WORDPRESS_URL: http://blog.tipers.live
+      WORDPRESS_TITLE: "Tiper.Live Blog"
+      WORDPRESS_ADMIN_USER: "bicstation"
+      WORDPRESS_ADMIN_PASSWORD: "1492nabe"
+      WORDPRESS_ADMIN_EMAIL: "bicstation@gmail.com"
+
+      WORDPRESS_DEBUG: true
+      WORDPRESS_DEBUG_LOG: true
+      WORDPRESS_DEBUG_DISPLAY: false
     volumes:
       - ./wordpress:/var/www/html # ローカルの ./wordpress ディレクトリをコンテナのWebルートにマウント
     depends_on:
-      - wordpress_db # WordPressデータベースに依存
+      wordpress_db:
+        condition: service_healthy # service_healthy を使用
     networks:
       - app-network
+    restart: on-failure
+    healthcheck: # WordPressコンテナのヘルスチェック
+      test: ["CMD-SHELL", "wget -q -O - http://localhost/wp-admin/install.php || exit 1"] # install.phpがアクセス可能かチェック
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s # 初回起動時の猶予期間
 
   wordpress_db: # WordPress用MySQLデータベース
     image: mysql:8.0
     container_name: tiper_wordpress_db
     environment:
-      MYSQL_ROOT_PASSWORD: password     # ルートユーザーのパスワード
-      MYSQL_DATABASE: wordpress_db      # データベース名
-      MYSQL_USER: wordpress             # WordPress接続用ユーザー名
-      MYSQL_PASSWORD: password          # WordPress接続用パスワード
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wordpress_db
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: password
     volumes:
       - wordpress_db_data:/var/lib/mysql # WordPressデータベースのデータを永続化
     networks:
       - app-network
+    restart: on-failure
+    healthcheck: # データベースコンテナのヘルスチェック
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   app-network:
