@@ -36,7 +36,7 @@ services:
         condition: service_healthy # service_healthy を使用
     networks:
       - app-network
-    restart: on-failure
+    restart: on-failure # エラー時に再起動する
 
   db: # Laravel用MySQLデータベース
     image: mysql:8.0
@@ -77,7 +77,7 @@ services:
       - app-network
     restart: on-failure
     healthcheck: # WordPressコンテナのヘルスチェック
-      test: ["CMD-SHELL", "wget -q -O - http://localhost/wp-admin/install.php || exit 1"] # install.phpがアクセス可能かチェック
+      test: ["CMD-SHELL", "wget -q -O - http://localhost/ || exit 1"] # ★ここを修正しました！トップページがアクセス可能かチェック
       interval: 10s
       timeout: 5s
       retries: 5
