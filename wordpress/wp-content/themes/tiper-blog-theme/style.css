@@ -1,0 +1,21 @@
+/*
+Theme Name: Tiper Blog Theme
+Theme URI: http://blog.tipers.live/
+Author: Your Name
+Author URI: http://blog.tipers.live/
+Description: A custom theme for Tiper.live blog.
+Version: 1.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Tags: custom-background, custom-header, custom-menu, featured-images, flexible-header, full-width-template, theme-options, translation-ready
+Text Domain: tiper-blog-theme
+*/
+
+/*
+上記functions.phpの<style>タグ内のCSSは、このstyle.cssに移すこともできますが、
+functions.phpのwp_add_inline_styleで追加されるCSSが優先されるため、
+両方に記述すると意図しない挙動になる可能性があります。
+まずは現状維持で、functions.phpでCSSを管理することをおすすめします。
+*/
+
+/* Additional custom styles here if needed */

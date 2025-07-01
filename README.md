@@ -1,4 +1,8 @@
 Dockerで起動する方法
+最初に、行うこと
+cd ~/tiper_laravel_app
+docker-compose down && docker-compose up --build -d
+
 docker-compose down
 docker-compose up -d --build
 
