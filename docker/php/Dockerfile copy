@@ -1,0 +1,18 @@
+# PHPに必要な拡張機能をインストール
+# 複数の拡張を効率的にインストールするために、&& でつなぎます。
+# 依存関係を考慮し、pdo -> pdo_mysql の順で記載
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    opcache \
+    gd \
+    exif \
+    intl \
+    zip \
+    bcmath \
+    ctype \     # <-- ここにバックスラッシュを追加
+    fileinfo \
+    mbstring \
+    openssl \
+    tokenizer \
+    && docker-php-ext-enable opcache # opcache は enable が必要
