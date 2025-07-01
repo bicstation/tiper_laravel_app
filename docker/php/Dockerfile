@@ -8,16 +8,19 @@ RUN apk add --no-cache tzdata \
     && echo "${TIMEZONE}" > /etc/timezone
 
 # PHP拡張機能のビルドに必要なシステムライブラリを追加
+# icu-dev は intl 拡張機能の依存ライブラリです。
 RUN apk add --no-cache \
     libzip-dev \
     libpng-dev \
     libjpeg-turbo-dev \
     freetype-dev \
     zlib-dev \
+    icu-dev \
     && rm -rf /var/cache/apk/*
 
 # PHPに必要な拡張機能をインストール
-RUN docker-php-ext-install pdo pdo_mysql opcache gd exif \
+# intl 拡張機能を追加します。
+RUN docker-php-ext-install pdo pdo_mysql opcache gd exif intl \
     && docker-php-ext-enable opcache
 
 # Composerをインストール
