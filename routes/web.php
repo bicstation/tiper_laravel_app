@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\AnalyticsController; // ★★★ これを追加 ★★★
 
 /*
 |--------------------------------------------------------------------------
@@ -76,5 +77,9 @@ Route::get('/test-sokmil-api', function () {
     }
 });
 // --- Sokmil API テスト用のルートここまで ---
+
+// ★★★ ここに簡易アクセス解析のレポートを表示するルートを追加 ★★★
+Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+
 
 require __DIR__.'/auth.php';

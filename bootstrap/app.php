@@ -11,7 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // webミドルウェアグループにLogPageViewミドルウェアを追加します
+        $middleware->web(append: [
+            \App\Http\Middleware\LogPageView::class,
+        ]);
+
+        // 必要であれば、他のミドルウェアグループ（例: api）もここで定義できます
+        // $middleware->api(append: [
+        //     // ...
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
