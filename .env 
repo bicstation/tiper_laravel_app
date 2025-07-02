@@ -16,6 +16,6 @@ FANZA_AFFILIATE_ID="bicbic-990" # ★FANZAで取得したアフィリエイトID
 # FANZA_API_KEYはFANZAのAPIによっては使わない場合もあるので、上記の例ではIDとアフィリエイトIDを使っています。
 
 # SOKMILの設定（前回の内容）
-OKMIL_BASE_API_URL="https://sokmil-ad.com/api/v1/Item"
+SOKMIL_BASE_API_URL="https://sokmil-ad.com/api/v1/Item"
 SOKMIL_AFFILIATE_ID="43208-001" # あなたの実際のIDに置き換え
 SOKMIL_API_KEY="62838deb4125f996f5577265c62cd88c" # あなたの実際のキーに置き換え
