@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   app: # Laravel PHP-FPM サービス
     build:
@@ -5,7 +7,7 @@ services:
       dockerfile: ./docker/php/Dockerfile # Dockerfileへのパスを context からの相対パスで指定
     container_name: tiper_laravel_app_php
     volumes:
-      - .:/var/www/html # Laravelのルート
+      - .:/var/www/html # ★★★ ここをコメントアウト解除しました！これでホストのファイルがコンテナにマウントされます。 ★★★
       - ./wordpress:/var/www/wordpress # WordPressのファイルをPHPコンテナにもマウント
       - ./.env.local:/var/www/html/.env # ホストの.env.localをコンテナの.envとしてマウント
     depends_on:
@@ -41,7 +43,7 @@ services:
   db: # Laravel用MySQLデータベース
     image: mysql:8.0
     container_name: tiper_laravel_app_db
-    ports: # ★★★ ここが追加・修正された点です！ ★★★
+    ports:
       - "3306:3306" # ホストの3306ポートをコンテナの3306ポートにマッピング
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-tiper}
@@ -67,13 +69,11 @@ services:
       WORDPRESS_DB_PASSWORD: password
       WORDPRESS_DB_NAME: wordpress_db
       WORDPRESS_LANG: ja
-
       WORDPRESS_URL: http://blog.tipers.live
       WORDPRESS_TITLE: "Tiper.Live Blog"
       WORDPRESS_ADMIN_USER: "bicstation"
       WORDPRESS_ADMIN_PASSWORD: "1492nabe"
       WORDPRESS_ADMIN_EMAIL: "bicstation@gmail.com"
-
       WORDPRESS_DEBUG: true
       WORDPRESS_DEBUG_LOG: true
       WORDPRESS_DEBUG_DISPLAY: false
@@ -86,7 +86,7 @@ services:
       - app-network
     restart: on-failure
     healthcheck: # WordPressコンテナのヘルスチェック
-      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"] # ★ここを修正しました！トップページがアクセス可能かチェック
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -111,6 +111,21 @@ services:
       timeout: 5s
       retries: 5
     command: --default-authentication-plugin=mysql_native_password --skip-ssl
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: tiper_phpmyadmin
+    restart: always
+    ports:
+      - "8081:80" # ホストの8081ポートでPhpMyAdminにアクセス
+    environment:
+      PMA_HOST: db # LaravelのMySQLサービス名 (db) を指定
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password} # LaravelのMySQLのrootパスワードを使用
+    depends_on:
+      db:
+        condition: service_healthy # dbサービスがhealthyになるまで待つ
+    networks:
+      - app-network
 
 networks:
   app-network:
