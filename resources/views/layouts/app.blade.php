@@ -29,7 +29,8 @@
         <div x-data="{ sidebarOpen: false }" 
              @toggle-sidebar.window="sidebarOpen = !sidebarOpen"
              x-show="sidebarOpen"
-             class="fixed top-0 left-0 h-full w-70 bg-gray-800 text-white z-50 md:hidden overflow-y-auto p-4 shadow-lg">
+             class="fixed top-0 left-0 h-full w-70 bg-gray-800 text-white z-50 md:hidden overflow-y-auto p-4 shadow-lg"
+             x-cloak> {{-- <-- ここに x-cloak を追加しました --}}
             
             <div class="flex justify-between items-center pb-4 border-b border-gray-700 mb-4">
                 <h5 class="text-lg font-bold flex items-center" id="offcanvasLabel">
@@ -46,7 +47,7 @@
         </div>
         {{-- モバイルサイドバーオーバーレイ --}}
         {{-- ここから x-transition を削除 --}}
-        <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"></div>
+        <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" x-cloak></div> {{-- <-- ここにも x-cloak を追加しました --}}
 
 
         {{-- ★★★ 新しいメインコンテンツとデスクトップサイドバーのラッパー ★★★ --}}

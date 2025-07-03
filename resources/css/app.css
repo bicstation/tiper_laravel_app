@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/*
+ * Alpine.js の x-cloak ディレクティブは、要素が Alpine.js によって初期化されるまで表示されないようにします。
+ * 今回のオーバーレイの問題とは直接関係ないかもしれませんが、Alpine.js での推奨プラクティスです。
+ */
+[x-cloak] {
+    display: none !important;
+}
+
+/*
+ * ここが今回の問題の核心です。
+ * x-show は通常、要素を非表示にする際に `display: none;` を適用しますが、
+ * 何らかの理由でそれが機能しない場合、明示的に `display: none !important;` を指定することで、
+ * 他の CSS ルールによる上書きを防ぎます。
+ *
+ * このルールは、x-show="false" になった要素に `display: none` が適用されなかった場合のみ効果を発揮します。
+ */
+[x-show="false"] {
+    display: none !important;
+}
+
+/*
+ * オーバーレイに `md:hidden` クラスがあるため、モバイル表示時（mdブレークポイント以下）にのみ
+ * オーバーレイが有効になるように、念のためこのルールも確認しておくと良いでしょう。
+ * 通常、Tailwind CSS が自動的に処理します。
+ */
+@media (min-width: 768px) { /* Tailwindのmdブレークポイント */
+    .md\:hidden {
+        display: none !important;
+    }
+}
