@@ -33,12 +33,23 @@
         {{-- ログイン/登録ボタン（常に表示） --}}
         <div class="d-flex align-items-center ms-auto ms-md-3">
             @auth
+                {{-- ★★★ ここに管理ダッシュボードへのリンクを追加 ★★★ --}}
+                <a href="{{ env('FILAMENT_ADMIN_URL') }}" class="btn btn-outline-info me-2 d-none d-md-inline-flex">
+                    <i class="fas fa-cog me-2"></i>管理ダッシュボード
+                </a>
+                {{-- モバイル用ドロップダウンメニューにも追加する場合は、以下をドロップダウンリスト内に追加 --}}
+                {{--
+                <a class="dropdown-item" href="{{ env('FILAMENT_ADMIN_URL') }}"><i class="fas fa-cog me-2"></i>管理ダッシュボード</a>
+                --}}
                 <div class="dropdown">
                     <a class="btn btn-outline-light dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user me-2"></i>{{ Auth::user()->name }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="fas fa-user-circle me-2"></i>プロフィール</a></li>
+                        {{-- ★★★ モバイル用ドロップダウンメニューに管理ダッシュボードリンクを追加するならここ ★★★ --}}
+                        <li class="d-md-none"><a class="dropdown-item" href="{{ env('FILAMENT_ADMIN_URL') }}"><i class="fas fa-cog me-2"></i>管理ダッシュボード</a></li>
+                        <li><hr class="dropdown-divider d-md-none"></li> {{-- モバイルのみ区切り線 --}}
                         <li>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf

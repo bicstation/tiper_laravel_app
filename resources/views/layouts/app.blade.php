@@ -1,149 +1,134 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {{-- ページタイトルを動的に設定。デフォルトは config('app.name') --}}
-    <title>@yield('title', config('app.name', 'Tiper.Live'))</title> 
+        <title>{{ config('app.name', 'Laravel') }}</title>
 
-    {{-- asset() ヘルパーで public/img/logo.webp を参照 --}}
-    <link rel="icon" href="{{ asset('img/logo.webp') }}"> 
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-    {{-- Font Awesome の CDN 読み込み --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlalH/lRjYwT+5R5/3o/Xv+p4eD/jLpE9y+5z4k7U3o2lQ5J/h+rT+6M+G8w2e/Rz+y+X6D+Q6w+w+x+XQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    {{-- Bootstrap CSS (Viteを使わずにCDNから読み込む) --}}
-    {{-- ★resources/css/app.css で読み込むため、この行は削除またはコメントアウトしてもOKですが、今回はCDNを優先する形で残します --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        {{-- Laravel Breezeが自動生成するapp.css (Tailwind CSS) は使用しないためコメントアウト --}}
+        {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 
-    {{-- カスタムCSS (public/css/style_v2.css) --}}
-    <link href="{{ asset('css/style_v2.css') }}" rel="stylesheet"> 
-
-    {{-- Vite CSSアセットとJavaScriptアセットをここでまとめて読み込む！ --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    {{-- ここに、追加のインラインスタイルを記述します。 --}}
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        #main-content-area {
-            display: flex;
-            flex-grow: 1; 
-            width: 100%; 
-        }
-
-        aside.d-md-block {
-            flex-shrink: 0; 
-            width: 280px;   
-            height: 100%; 
-            overflow-y: auto; 
-        }
-
-        #main-content-wrapper {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1; 
-            width: calc(100% - 280px); 
-            overflow-x: hidden; 
-        }
-        
-        main {
-            flex-grow: 1;
-            overflow-y: auto; 
-        }
-
-        /* サイドバーの背景色をカスタマイズ（ダークモードに合わせる） */
-        .offcanvas.bg-dark, aside.bg-dark {
-            background-color: #343a40 !important; 
-        }
-        /* アコーディオンのヘッダーとボディのテキスト色を調整 */
-        .accordion-button.bg-dark,
-        .accordion-body .list-unstyled a {
-            color: white; 
-        }
-        /* アクティブなリンクのスタイル */
-        .nav-link.active, .accordion-button:not(.collapsed) {
-            color: #fff;
-            background-color: #0d6efd; 
-            border-radius: 0.25rem;
-        }
-        .accordion-button:focus {
-            box-shadow: none; 
-        }
-        /* メインナビが常に表示されるように調整 (Bootstrapのデフォルト動作で非表示になるのを防ぐため) */
-        /* d-md-none と連携してデスクトップで表示、モバイルで非表示にする */
-        .navbar-collapse.collapse:not(.d-md-none) {
-            display: block !important;
-        }
-        .navbar-toggler:not(.d-md-none) {
-            display: none !important; 
-        }
-        @media (max-width: 767.98px) { /* md未満の画面サイズ */
-            .navbar-collapse.collapse:not(.d-md-none) {
-                display: none !important; 
+        {{-- カスタムCSSのスタイルブロック --}}
+        <style>
+            /* Bootstrap 5.3 に特化したカスタムスタイル */
+            body {
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh; /* 画面の高さいっぱいに広げる */
+                background-color: #f8f9fa; /* 背景色 */
             }
-            .navbar-toggler:not(.d-md-none) {
-                display: block !important; 
-            }
-            aside.d-md-block {
-                display: none !important; 
-            }
-        }
-    </style>
 
-    {{-- 各ページ固有のスタイルを挿入するためのプレースホルダー --}}
-    @stack('styles')
-</head>
-<body class="font-sans antialiased">
-    {{-- メインナビゲーション (ページの最上部) --}}
-    @include('layouts.navi')
+            /* ナビバーの高さに合わせてメインコンテンツを下にずらす */
+            .main-content-area {
+                padding-top: 56px; /* ナビバーの高さ (Bootstrapのデフォルトは約56px) */
+                flex-grow: 1; /* 残りの高さを占有 */
+            }
 
-    {{-- メインコンテンツ領域（サイドバーと、その隣にコンテンツ） --}}
-    <div id="main-content-area">
-        {{-- デスクトップ用固定サイドバー (mdサイズ以上でのみ表示) --}}
-        <aside class="bg-dark text-white d-none d-md-block">
-            <div class="p-3 border-bottom border-secondary">
-                <h5 class="text-white">サイドメニュー</h5>
+            /* デスクトップサイドバーのスタイル */
+            .desktop-sidebar {
+                position: fixed;
+                top: 56px; /* ナビバーの高さの分だけ下にずらす */
+                left: 0;
+                bottom: 0;
+                width: 280px; /* サイドバーの固定幅 */
+                background-color: #343a40; /* Dark背景色 */
+                overflow-y: auto; /* コンテンツが長い場合にスクロール */
+                z-index: 1030; /* Navbar(1050)より低く、Dropdown(1070)より低く */
+                padding: 1rem; /* サイドバー内部のパディング */
+            }
+
+            /* メインコンテンツエリアの左マージンを調整 */
+            @media (min-width: 768px) { /* md以上 */
+                .main-content-wrapper,
+                .main-content-footer {
+                    margin-left: 280px; /* デスクトップサイドバーの幅分マージンを設定 */
+                }
+            }
+            /* モバイルではマージンをリセット */
+            @media (max-width: 767.98px) { /* md未満 */
+                .main-content-wrapper,
+                .main-content-footer {
+                    margin-left: 0 !important; /* 強制的にマージンをリセット */
+                }
+            }
+
+            /* コンテンツエリアの背景色と影 */
+            .content-card {
+                background-color: #fff; /* 白い背景 */
+                padding: 1.5rem; /* パディング */
+                border-radius: .25rem; /* 角丸 */
+                box-shadow: 0 .125rem .25rem rgba(0,0,0,.075); /* 軽い影 */
+            }
+
+            /* ナビバーの z-index を明示的に高く設定 */
+            .navbar {
+                z-index: 1050; /* Bootstrapデフォルト */
+            }
+
+            /* ドロップダウンメニューの z-index をさらに高く設定 */
+            .navbar-nav .dropdown-menu {
+                z-index: 1070; /* Navbar(1050)やオフキャンバス(1040)より高く、モーダルバックドロップ(1060)より高く設定 */
+            }
+
+            /* オフキャンバスの z-index も確認 */
+            .offcanvas {
+                z-index: 1040; /* Bootstrapデフォルト */
+            }
+
+            /* 子ビューから追加されるスタイル */
+            @yield('styles')
+        </style>
+    </head>
+    <body>
+        {{-- ★★★ ナビゲーションバー (ヘッダー) ★★★ --}}
+        @include('layouts.navi') 
+
+        {{-- ★★★ オフキャンバスサイドバー (モバイル用) ★★★ --}}
+        <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="myCustomSidebar" aria-labelledby="offcanvasLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasLabel">
+                    <img src="{{ asset('img/logo.webp') }}" alt="Logo" height="30" class="me-2"> Tiper.Live メニュー
+                </h5>
+                <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-            <div class="accordion accordion-flush w-100" id="sidebarAccordionDesktop">
-                {{-- サイドバーコンテンツをインクルードし、アコーディオンIDを渡す --}}
-                @include('layouts.sidebar', ['accordionId' => 'sidebarAccordionDesktop'])
+            <div class="offcanvas-body">
+                {{-- オフキャンバス用サイドバーの内容を読み込む --}}
+                @include('layouts.sidebar', ['accordionId' => 'sidebarAccordionMobile', 'isDugaDomain' => (Request::getHost() === 'duga.tipers.live')])
             </div>
-        </aside>
+        </div>
 
-        {{-- サイドバーの隣に配置されるメインコンテンツラッパー --}}
-        <div id="main-content-wrapper">
-            {{-- メインナビがトップに移動したので、ここには不要です --}}
-            <main class="p-3"> {{-- メインコンテンツにパディングを追加 --}}
-                {{-- 各ページ固有のコンテンツがここに挿入されます --}}
-                @yield('content')
+        {{-- メインコンテンツとデスクトップサイドバーのラッパー --}}
+        <div class="main-content-area d-flex"> 
+            {{-- ★★★ デスクトップ用サイドバー ★★★ --}}
+            <aside class="desktop-sidebar d-none d-md-block"> {{-- md以上の画面で表示 --}}
+                {{-- デスクトップ用サイドバーの内容を読み込む --}}
+                @include('layouts.sidebar', ['accordionId' => 'sidebarAccordionDesktop', 'isDugaDomain' => (Request::getHost() === 'duga.tipers.live')])
+            </aside>
+
+            {{-- ★★★ メインコンテンツエリア ★★★ --}}
+            <main class="flex-grow-1 p-4 main-content-wrapper"> 
+                {{-- ここに子ビューのコンテンツが展開される --}}
+                @yield('content') {{-- ★★★ $slot を @yield('content') に変更 ★★★ --}}
             </main>
-        </div>
-    </div>
+        </div> {{-- .main-content-area の閉じタグ --}}
 
-    {{-- フッター (常に全幅) --}}
-    @include('layouts.footer')
-
-    {{-- モバイル用オフキャンバス サイドバー (mdサイズ未満でのみ表示) --}}
-    <div class="offcanvas offcanvas-start bg-dark text-white d-md-none" tabindex="-1" id="myCustomSidebar" aria-labelledby="myCustomSidebarLabel">
-        <div class="offcanvas-header border-bottom border-secondary">
-            <h5 class="offcanvas-title" id="myCustomSidebarLabel">サイドメニュー</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column p-0">
-            <div class="accordion accordion-flush w-100" id="sidebarAccordionMobile">
-                {{-- サイドバーコンテンツをインクルードし、アコーディオンIDを渡す --}}
-                @include('layouts.sidebar', ['accordionId' => 'sidebarAccordionMobile'])
+        {{-- ★★★ フッター ★★★ --}}
+        <footer class="bg-dark text-white py-3 main-content-footer">
+            <div class="container"> {{-- メインコンテンツと同じ .container を使用 --}}
+                @include('layouts.footer') 
             </div>
-        </div>
-    </div>
+        </footer>
 
-    {{-- 各ページ固有のスクリプトを挿入するためのプレースホルダー --}}
-    @stack('scripts')
-</body>
-</html>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+        {{-- sidebar.blade.php の @push('scripts') がここに入る --}}
+        @stack('scripts')
+        {{-- 子ビューから追加されるスクリプト --}}
+        @yield('scripts')
+    </body>
