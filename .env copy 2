@@ -1,0 +1,26 @@
+APP_ENV=local
+APP_DEBUG=true
+
+DB_HOST=127.0.0.1 # または localhost
+DB_DATABASE=tiper
+DB_USERNAME=root
+DB_PASSWORD=password
+
+PHPMYADMIN_URL=http://localhost:8080
+
+FILAMENT_ADMIN_URL=http://tipers.live/admin # または Filament ダッシュボードの実際のURL
+
+# API Settings for Product Import
+# DUGAの設定（前回の内容）
+DUGA_API_URL="http://affapi.duga.jp/search"
+DUGA_API_KEY="HJtCqdpgl8tVorhyz7Lr"
+
+FANZA_API_URL="ttps://api.dmm.com/affiliate/v3/ItemList" # ★FANZA APIのベースURL。ドキュメント要確認
+FANZA_API_ID="GkGxcxhcMKUgQGWzPnp9" # ★FANZAで取得したAPI IDに置き換え
+FANZA_AFFILIATE_ID="bicbic-990" # ★FANZAで取得したアフィリエイトIDに置き換え
+# FANZA_API_KEYはFANZAのAPIによっては使わない場合もあるので、上記の例ではIDとアフィリエイトIDを使っています。
+
+# SOKMILの設定（前回の内容）
+OKMIL_BASE_API_URL="https://sokmil-ad.com/api/v1/Item"
+SOKMIL_AFFILIATE_ID="43208-001" # あなたの実際のIDに置き換え
+SOKMIL_API_KEY="62838deb4125f996f5577265c62cd88c" # あなたの実際のキーに置き換え

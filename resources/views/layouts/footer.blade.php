@@ -1,47 +1,56 @@
 {{-- resources/views/layouts/footer.blade.php --}}
 
-<footer class="bg-dark text-white py-4 mt-auto grid-footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 mb-3 mb-md-0">
-                <h5><i class="fas fa-link me-2"></i>関連ドメイン</h5>
-                <ul class="list-unstyled">
-                    <li><a href="{{ url('/') }}" class="text-white text-decoration-none"><i class="fas fa-globe me-2"></i>tiper.live (メインサイト)</a></li>
-                    <li><a href="http://blog.tipers.live/" class="text-white text-decoration-none"><i class="fas fa-blog me-2"></i>blog.tiper.live (ブログ)</a></li>
-                    <li><a href="http://tipers.live:8081/" class="text-white text-decoration-none"><i class="fas fa-database me-2"></i>phpMyAdmin (開発用)</a></li>
-                    {{-- ★★★ ここにFilamentダッシュボードへのリンクを追加 (ログイン時のみ表示) ★★★ --}}
-                    @auth
-                        <li><a href="{{ env('FILAMENT_ADMIN_URL') }}" class="text-white text-decoration-none"><i class="fas fa-tachometer-alt me-2"></i>Filamentダッシュボード</a></li>
-                    @endauth
-                </ul>
-            </div>
-            <div class="col-md-4 mb-3 mb-md-0">
-                <h5><i class="fas fa-info-circle me-2"></i>一般リンク</h5>
-                <ul class="list-unstyled">
-                    <li><a href="{{ url('/sitemap') }}" class="text-white text-decoration-none"><i class="fas fa-sitemap me-2"></i>サイトマップ</a></li>
-                    <li><a href="{{ url('/privacy-policy') }}" class="text-white text-decoration-none"><i class="fas fa-shield-alt me-2"></i>プライバシーポリシー</a></li>
-                    <li><a href="{{ url('/terms-of-service') }}" class="text-white text-decoration-none"><i class="fas fa-file-contract me-2"></i>利用規約</a></li>
-                    <li><a href="{{ url('/company') }}" class="text-white text-decoration-none"><i class="fas fa-users me-2"></i>会社概要</a></li>
-                    <li><a href="{{ url('/rss') }}" class="text-white text-decoration-none"><i class="fas fa-rss-square me-2"></i>RSS</a></li>
-                </ul>
-            </div>
-            <div class="col-md-4">
-                <h5><i class="fas fa-map-marker-alt me-2"></i>お問い合わせ</h5>
-                <address class="mb-0">
-                    〒306-0615 茨城県坂東市<br>
-                    <i class="fas fa-phone-alt me-2"></i>XXX-XXX-XXXX<br> 
-                    <i class="fas fa-envelope me-2"></i><a href="mailto:info@example.com" class="text-white text-decoration-none">info@example.com</a> 
-                </address>
-                <div class="mt-3">
-                    <a href="#" class="text-white me-2"><i class="fab fa-twitter-square fa-2x"></i></a>
-                    <a href="#" class="text-white me-2"><i class="fab fa-facebook-square fa-2x"></i></a>
-                    <a href="#" class="text-white"><i class="fab fa-instagram-square fa-2x"></i></a>
-                </div>
-            </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-gray-300">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 py-4 border-b border-gray-700">
+        {{-- 列 1: 会社情報 --}}
+        <div>
+            <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+                <i class="fas fa-building mr-2 text-blue-400"></i>Tiper.Live
+            </h3>
+            <p class="text-sm leading-relaxed mb-2">
+                お客様のビジネス成長をサポートする革新的なサービスを提供しています。
+            </p>
+            <p class="text-sm">
+                〒123-4567 東京都千代田区〇〇 1-2-3
+            </p>
+            <p class="text-sm">
+                電話: 03-XXXX-XXXX
+            </p>
         </div>
-        <hr class="my-3 border-secondary">
-        <div class="text-center">
-            <p class="mb-0">&copy; 2025 Tiper Live. All rights reserved.</p>
+
+        {{-- 列 2: クイックリンク --}}
+        <div>
+            <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+                <i class="fas fa-link mr-2 text-blue-400"></i>クイックリンク
+            </h3>
+            <ul class="space-y-2">
+                <li><a href="{{ url('/about') }}" class="hover:text-white transition duration-150 ease-in-out text-sm"><i class="fas fa-angle-right mr-2"></i>会社概要</a></li>
+                <li><a href="{{ url('/services') }}" class="hover:text-white transition duration-150 ease-in-out text-sm"><i class="fas fa-angle-right mr-2"></i>サービス</a></li>
+                <li><a href="{{ url('/news') }}" class="hover:text-white transition duration-150 ease-in-out text-sm"><i class="fas fa-angle-right mr-2"></i>ニュース</a></li>
+                <li><a href="{{ url('/faq') }}" class="hover:text-white transition duration-150 ease-in-out text-sm"><i class="fas fa-angle-right mr-2"></i>よくある質問</a></li>
+            </ul>
+        </div>
+
+        {{-- 列 3: 法的情報とソーシャルメディア --}}
+        <div>
+            <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+                <i class="fas fa-gavel mr-2 text-blue-400"></i>その他
+            </h3>
+            <ul class="space-y-2 mb-4">
+                <li><a href="{{ url('/terms') }}" class="hover:text-white transition duration-150 ease-in-out text-sm"><i class="fas fa-angle-right mr-2"></i>利用規約</a></li>
+                <li><a href="{{ url('/privacy') }}" class="hover:text-white transition duration-150 ease-in-out text-sm"><i class="fas fa-angle-right mr-2"></i>プライバシーポリシー</a></li>
+                <li><a href="{{ url('/contact') }}" class="hover:text-white transition duration-150 ease-in-out text-sm"><i class="fas fa-angle-right mr-2"></i>お問い合わせ</a></li>
+            </ul>
+            <div class="flex space-x-4 mt-4">
+                <a href="#" class="text-gray-400 hover:text-white transition duration-150 ease-in-out"><i class="fab fa-twitter text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition duration-150 ease-in-out"><i class="fab fa-facebook-f text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition duration-150 ease-in-out"><i class="fab fa-linkedin-in text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition duration-150 ease-in-out"><i class="fab fa-instagram text-xl"></i></a>
+            </div>
         </div>
     </div>
-</footer>
+
+    <div class="text-center py-4 text-sm text-gray-400">
+        &copy; {{ date('Y') }} Tiper.Live All rights reserved.
+    </div>
+</div>

@@ -1,161 +1,56 @@
 {{-- resources/views/layouts/sidebar.blade.php --}}
+<div class="space-y-2">
+    {{-- ホームリンク --}}
+    <a href="{{ url('/') }}" class="flex items-center px-4 py-2 rounded-md text-white hover:bg-gray-700 transition duration-150 ease-in-out {{ Request::is('/') ? 'bg-gray-700' : '' }}">
+        <i class="fas fa-home w-5 h-5 mr-3"></i>ホーム
+    </a>
 
-{{--
-    このファイルは、app.blade.php の `.offcanvas-body` の中、
-    またはデスクトップ用 <aside> タグの中に
-    インクルードされることを想定しています。
-    したがって、外側のラッパー要素（例: <div class="sidebar">）は含めません。
---}}
-
-{{-- サイドバーの項目リスト (アコーディオンではない直接のリンク) --}}
-<ul class="list-unstyled mb-0">
-    <li>
-        {{-- tiper.live のトップページの場合のみ active --}}
-        <a class="nav-link text-white py-2 {{ Request::is('/') && Request::getHost() === 'tiper.live' ? 'active' : '' }}" href="{{ url('/') }}">
-            <i class="fas fa-home me-2"></i>ホーム
-        </a>
-    </li>
-    {{-- ダッシュボードリンク（メインドメインのみ） --}}
-    @if (!isset($isDugaDomain) || !$isDugaDomain)
-    <li>
-        <a class="nav-link text-white py-2 {{ Request::is('dashboard') && Request::getHost() === 'tiper.live' ? 'active' : '' }}" href="{{ url('/dashboard') }}">
-            <i class="fas fa-tachometer-alt me-2"></i>ダッシュボード
-        </a>
-    </li>
-    @endif
-</ul>
-
-{{-- サイドバーのアコーディオンメニュー --}}
-{{-- $accordionId は app.blade.php から渡されます (例: sidebarAccordionDesktop, sidebarAccordionMobile) --}}
-
-{{-- アコーディオン全体のラッパー（重要：これがないとdata-bs-parentが機能しません） --}}
-<div class="accordion accordion-flush" id="{{ $accordionId }}"> 
-    @if (isset($isDugaDomain) && $isDugaDomain) {{-- $isDugaDomain がコントローラから渡され、かつtrueの場合 --}}
-
-        {{-- Dugaジャンル --}}
-        <div class="accordion-item bg-dark">
-            <h2 class="accordion-header" id="headingDugaGenres">
-                <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDugaGenres" aria-expanded="false" aria-controls="collapseDugaGenres">
-                    <i class="fas fa-video me-2"></i>Dugaジャンル
-                </button>
-            </h2>
-            <div id="collapseDugaGenres" class="accordion-collapse collapse" aria-labelledby="headingDugaGenres" data-bs-parent="#{{ $accordionId }}">
-                <div class="accordion-body bg-dark">
-                    <ul class="list-unstyled mb-0">
-                        @if (!empty($dugaGenres))
-                            @foreach ($dugaGenres as $genre)
-                                <li>
-                                    <a class="nav-link text-white py-2" href="http://duga.tipers.live?genre={{ urlencode($genre) }}">
-                                        <i class="fas fa-tag me-2"></i>{{ htmlspecialchars($genre) }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        @else
-                            <li><span class="nav-link text-muted">ジャンルなし</span></li>
-                        @endif
-                    </ul>
-                </div>
-            </div>
+    {{-- ダッシュボードカテゴリ (アコーディオン) --}}
+    <div x-data="{ open: false }" class="rounded-md">
+        <button @click="open = !open" class="flex items-center justify-between w-full px-4 py-2 text-left rounded-md text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 transition duration-150 ease-in-out">
+            <span class="flex items-center">
+                <i class="fas fa-chart-line w-5 h-5 mr-3"></i>ダッシュボード
+            </span>
+            <svg class="h-5 w-5 transform transition-transform duration-200" :class="{ 'rotate-90': open }" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+        </button>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="pt-2 pl-6 space-y-1">
+            <a href="{{ url('/dashboard') }}" class="flex items-center px-4 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700 transition duration-150 ease-in-out {{ Request::is('dashboard') ? 'bg-gray-700 text-white' : '' }}">
+                <i class="fas fa-th-large w-4 h-4 mr-2"></i>概要
+            </a>
+            <a href="{{ url('/profile') }}" class="flex items-center px-4 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700 transition duration-150 ease-in-out {{ Request::is('profile') ? 'bg-gray-700 text-white' : '' }}">
+                <i class="fas fa-user-circle w-4 h-4 mr-2"></i>プロフィール設定
+            </a>
+            {{-- さらにサブカテゴリを追加するならここに記述 --}}
         </div>
+    </div>
 
-    @else {{-- メインドメイン (tiper.live) の場合 --}}
-
-        {{-- カテゴリ 1 --}}
-        <div class="accordion-item bg-dark">
-            <h2 class="accordion-header" id="headingCategory1">
-                <button class="accordion-button bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory1" aria-expanded="true" aria-controls="collapseCategory1">
-                    <i class="fas fa-folder me-2"></i>カテゴリ 1
-                </button>
-            </h2>
-            <div id="collapseCategory1" class="accordion-collapse collapse show" aria-labelledby="headingCategory1" data-bs-parent="#{{ $accordionId }}">
-                <div class="accordion-body bg-dark">
-                    <ul class="list-unstyled mb-0">
-                        <li><a class="nav-link text-white py-2" href="#"><i class="fas fa-file-alt me-2"></i>サブメニュー 1-1</a></li>
-                        <li><a class="nav-link text-white py-2" href="#"><i class="fas fa-file-alt me-2"></i>サブメニュー 1-2</a></li>
-                        <li><a class="nav-link text-white py-2" href="#"><i class="fas fa-file-alt me-2"></i>サブメニュー 1-3</a></li>
-                        <li><a class="nav-link text-white py-2" href="{{ route('register') }}"><i class="fas fa-user-plus me-2"></i>ユーザー登録</a></li>
-                        <li><a class="nav-link text-white py-2" href="{{ url('/products_admin') }}"><i class="fas fa-cube me-2"></i>商品登録</a></li>
-                    </ul>
-                </div>
-            </div>
+    {{-- レポートカテゴリ (アコーディオン) --}}
+    <div x-data="{ open: false }" class="rounded-md">
+        <button @click="open = !open" class="flex items-center justify-between w-full px-4 py-2 text-left rounded-md text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 transition duration-150 ease-in-out">
+            <span class="flex items-center">
+                <i class="fas fa-chart-pie w-5 h-5 mr-3"></i>レポート
+            </span>
+            <svg class="h-5 w-5 transform transition-transform duration-200" :class="{ 'rotate-90': open }" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+        </button>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="pt-2 pl-6 space-y-1">
+            <a href="#" class="flex items-center px-4 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700 transition duration-150 ease-in-out">
+                <i class="fas fa-calendar-day w-4 h-4 mr-2"></i>日次レポート
+            </a>
+            <a href="#" class="flex items-center px-4 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700 transition duration-150 ease-in-out">
+                <i class="fas fa-calendar-alt w-4 h-4 mr-2"></i>月次レポート
+            </a>
         </div>
+    </div>
 
-        {{-- カテゴリ 2 --}}
-        <div class="accordion-item bg-dark">
-            <h2 class="accordion-header" id="headingCategory2">
-                <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory2" aria-expanded="false" aria-controls="collapseCategory2">
-                    <i class="fas fa-folder me-2"></i>カテゴリ 2
-                </button>
-            </h2>
-            <div id="collapseCategory2" class="accordion-collapse collapse" aria-labelledby="headingCategory2" data-bs-parent="#{{ $accordionId }}">
-                <div class="accordion-body bg-dark">
-                    <ul class="list-unstyled mb-0">
-                        <li><a class="nav-link text-white py-2" href="#"><i class="fas fa-chart-bar me-2"></i>データ分析</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        {{-- 認証 --}}
-        <div class="accordion-item bg-dark">
-            <h2 class="accordion-header" id="headingAuth">
-                <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAuth" aria-expanded="false" aria-controls="collapseAuth">
-                    <i class="fas fa-lock me-2"></i>認証
-                </button>
-            </h2>
-            <div id="collapseAuth" class="accordion-collapse collapse" aria-labelledby="headingAuth" data-bs-parent="#{{ $accordionId }}">
-                <div class="accordion-body bg-dark">
-                    <ul class="list-unstyled mb-0">
-                        @auth {{-- ユーザーがログインしている場合 --}}
-                            <li>
-                                <a class="nav-link text-white py-2" href="{{ route('logout') }}"
-                                   onclick="event.preventDefault(); document.getElementById('logout-form-sidebar').submit();">
-                                    <i class="fas fa-sign-out-alt me-2"></i>ログアウト
-                                </a>
-                                <form id="logout-form-sidebar" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                            </li>
-                            <li><a class="nav-link text-white py-2" href="{{ url('/users_admin') }}"><i class="fas fa-users-cog me-2"></i>ユーザー管理</a></li>
-                        @else {{-- ユーザーがログインしていない場合 --}}
-                            <li><a class="nav-link text-white py-2" href="{{ route('login') }}"><i class="fas fa-sign-in-alt me-2"></i>ログイン</a></li>
-                        @endauth
-                    </ul>
-                </div>
-            </div>
-        </div>
-    @endif
-</div> {{-- アコーディオン全体のラッパーの閉じタグ --}}
-
-@push('scripts') {{-- app.blade.php の @stack('scripts') に挿入される --}}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const myCustomSidebarOffcanvas = document.getElementById('myCustomSidebar');
-        const mainContent = document.querySelector('main');
-
-        if (myCustomSidebarOffcanvas && mainContent) {
-            myCustomSidebarOffcanvas.addEventListener('show.bs.offcanvas', function () {
-                // オフキャンバス表示時にメインコンテンツの左マージンを調整 (mdサイズ以上の場合のみ)
-                if (window.innerWidth >= 768) { 
-                    mainContent.style.marginLeft = '280px'; 
-                }
-            });
-            myCustomSidebarOffcanvas.addEventListener('hide.bs.offcanvas', function () {
-                mainContent.style.marginLeft = '0'; 
-            });
-            
-            // 画面サイズ変更時の対応
-            window.addEventListener('resize', function() {
-                if (window.innerWidth < 768) { 
-                    mainContent.style.marginLeft = '0';
-                } else { 
-                    const bsOffcanvas = bootstrap.Offcanvas.getInstance(myCustomSidebarOffcanvas);
-                    if (bsOffcanvas && bsOffcanvas._isShown) { 
-                        mainContent.style.marginLeft = '280px';
-                    }
-                }
-            });
-        }
-    });
-</script>
-@endpush
+    {{-- その他のリンク --}}
+    <a href="{{ url('/contact') }}" class="flex items-center px-4 py-2 rounded-md text-white hover:bg-gray-700 transition duration-150 ease-in-out {{ Request::is('contact') ? 'bg-gray-700' : '' }}">
+        <i class="fas fa-comments w-5 h-5 mr-3"></i>お問い合わせ
+    </a>
+    <a href="{{ url('/help') }}" class="flex items-center px-4 py-2 rounded-md text-white hover:bg-gray-700 transition duration-150 ease-in-out {{ Request::is('help') ? 'bg-gray-700' : '' }}">
+        <i class="fas fa-info-circle w-5 h-5 mr-3"></i>ヘルプ
+    </a>
+</div>

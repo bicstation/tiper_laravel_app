@@ -1,101 +1,107 @@
 {{-- resources/views/layouts/navi.blade.php --}}
+<nav x-data="{ open: false }" class="fixed w-full bg-blue-700 text-white shadow-lg z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-14 items-center">
+            {{-- ロゴとサイト名 --}}
+            <div class="flex items-center">
+                {{-- デスクトップ用ロゴ --}}
+                <a class="flex-shrink-0 flex items-center hidden md:flex" href="{{ url('/') }}">
+                    <img src="{{ asset('img/logo.webp') }}" alt="Tiper.Live Logo" class="h-8 w-auto mr-2">
+                    <span class="font-bold text-lg tracking-wide">Tiper.Live</span>
+                </a>
+                {{-- モバイル用ロゴ --}}
+                <a class="flex-shrink-0 flex items-center md:hidden" href="{{ url('/') }}">
+                    <img src="{{ asset('img/logo.webp') }}" alt="Tiper.Live Logo" class="h-8 w-auto">
+                </a>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top w-100">
-    <div class="container-fluid">
-        {{-- ブランドロゴとタイトル --}}
-        {{-- デスクトップ用 --}}
-        <a class="navbar-brand d-none d-md-flex align-items-center" href="{{ url('/') }}">
-            <img src="{{ asset('img/logo.webp') }}" alt="Tiper.Live Logo" height="30" class="me-2">
-            <span class="fw-bold">Tiper.Live</span> 
-        </a>
-        {{-- モバイル用 --}}
-        <a class="navbar-brand d-md-none" href="{{ url('/') }}">
-            <img src="{{ asset('img/logo.webp') }}" alt="Tiper.Live Logo" height="30">
-        </a>
-        
-        {{-- モバイル用オフキャンバスサイドバートグルボタン (モバイルでのみ表示) --}}
-        <button class="btn btn-primary d-md-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#myCustomSidebar" aria-controls="myCustomSidebar" aria-label="Toggle sidebar">
-            <i class="fas fa-bars"></i>
-        </button>
+                {{-- モバイル用サイドバートグルボタン --}}
+                <button @click="$dispatch('toggle-sidebar')" class="md:hidden ml-4 p-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
 
-        {{-- メインナビのトグルボタン --}}
-        {{-- `data-bs-toggle` と `data-bs-target` を削除し、ナビゲーションが常に展開されるようにする --}}
-        <button class="navbar-toggler" type="button" aria-expanded="true" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        {{-- メインナビゲーションのコンテンツ --}}
-        {{-- `collapse` を削除し、`show` を追加して常に表示 --}}
-        <div class="navbar-collapse show" id="mainNavbarCollapse">
-            {{-- メインナビゲーションリンク --}}
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    {{-- ホームへのリンク。ルートURLがtiper.liveの場合にactiveクラスを付与 --}}
-                    <a class="nav-link {{ Request::is('/') && Request::getHost() === 'tiper.live' ? 'active' : '' }}" aria-current="page" href="{{ url('/') }}"><i class="fas fa-home me-1"></i>ホーム</a>
-                </li>
-                {{-- サービス関連のリンクをドロップダウンに戻す --}}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-cogs me-1"></i>サービス
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-wrench me-2"></i>サービスA</a></li> 
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-tools me-2"></i>サービスB</a></li> 
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-code me-2"></i>サービスC</a></li> 
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-box me-1"></i>製品</a> 
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-question-circle me-1"></i>よくある質問</a> 
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-envelope me-1"></i>お問い合わせ</a> 
-                </li>
-            </ul>
-
-            {{-- デスクトップ用検索フォーム (モバイルでは非表示) --}}
-            <form class="d-none d-md-inline-flex me-2">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="検索..." aria-label="検索">
-                    <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+            {{-- デスクトップ用ナビゲーションリンク --}}
+            <div class="hidden space-x-8 md:flex items-center">
+                <a class="inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 text-white hover:text-blue-100 hover:border-b-2 hover:border-white focus:outline-none focus:border-white transition duration-150 ease-in-out" href="{{ url('/') }}">
+                    <i class="fas fa-home mr-2"></i>ホーム
+                </a>
+                
+                {{-- サービス ドロップダウン --}}
+                <div x-data="{ dropdownOpen: false }" class="relative">
+                    <button @click="dropdownOpen = !dropdownOpen" class="inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 text-white hover:text-blue-100 focus:outline-none focus:text-blue-100 focus:border-white transition duration-150 ease-in-out">
+                        <i class="fas fa-cogs mr-2"></i>サービス
+                        <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div x-show="dropdownOpen" @click.away="dropdownOpen = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-50">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i class="fas fa-wrench mr-2"></i>サービスA</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i class="fas fa-tools mr-2"></i>サービスB</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i class="fas fa-code mr-2"></i>サービスC</a>
+                    </div>
                 </div>
-            </form>
-            
-            {{-- モバイル用検索フォーム (モバイルでのみ表示、ナビゲーションが展開された際に表示) --}}
-            <form class="d-flex d-md-none mt-2 w-100">
-                <div class="input-group">
-                    <input class="form-control form-control-sm" type="search" placeholder="サイト内検索..." aria-label="Search">
-                    <button class="btn btn-outline-light btn-sm" type="submit"><i class="fas fa-search"></i></button>
-                </div>
-            </form>
-        </div>
-        
-        {{-- ログイン/登録ボタン（常に右側に表示） --}}
-        <div class="d-flex align-items-center ms-auto">
-            @auth
-                <div class="dropdown">
-                    <a class="btn btn-outline-light dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user me-2"></i>{{ Auth::user()->name }}
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="fas fa-user-circle me-2"></i>プロフィール</a></li>
-                        <li>
+
+                <a class="inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 text-white hover:text-blue-100 hover:border-b-2 hover:border-white focus:outline-none focus:border-white transition duration-150 ease-in-out" href="{{ url('/about') }}">
+                    <i class="fas fa-info-circle mr-2"></i>会社概要
+                </a>
+                <a class="inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 text-white hover:text-blue-100 hover:border-b-2 hover:border-white focus:outline-none focus:border-white transition duration-150 ease-in-out" href="{{ url('/contact') }}">
+                    <i class="fas fa-envelope mr-2"></i>お問い合わせ
+                </a>
+            </div>
+
+            {{-- ログイン/登録ボタン または ユーザーメニュー --}}
+            <div class="flex items-center ml-auto">
+                @auth
+                    {{-- ユーザーがログインしている場合 --}}
+                    <div x-data="{ profileOpen: false }" class="relative">
+                        <button @click="profileOpen = !profileOpen" class="flex items-center text-sm font-medium text-white hover:text-blue-100 focus:outline-none focus:text-blue-100 transition duration-150 ease-in-out">
+                            <img class="h-8 w-8 rounded-full object-cover mr-2" src="{{ asset('img/default-avatar.webp') }}" alt="User Avatar">
+                            <span>{{ Auth::user()->name }}</span>
+                            <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div x-show="profileOpen" @click.away="profileOpen = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-50">
+                            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i class="fas fa-user-circle mr-2"></i>プロフィール</a>
+                            <a href="{{ url('/dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i class="fas fa-chart-line mr-2"></i>ダッシュボード</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <a class="dropdown-item" href="route('logout')"
-                                   onclick="event.preventDefault();
-                                            this.closest('form').submit();">
-                                    <i class="fas fa-sign-out-alt me-2"></i>ログアウト
-                                </a>
+                                <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i class="fas fa-sign-out-alt mr-2"></i>ログアウト</a>
                             </form>
-                        </li>
-                    </ul>
-                </div>
+                        </div>
+                    </div>
+                @else
+                    {{-- ユーザーがログインしていない場合 --}}
+                    <a href="{{ route('login') }}" class="text-sm text-white hover:text-blue-100 mr-4 transition duration-150 ease-in-out">ログイン</a>
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}" class="px-3 py-1 bg-blue-500 rounded-md text-sm font-semibold text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">新規登録</a>
+                    @endif
+                @endauth
+            </div>
+        </div>
+    </div>
+
+    {{-- モバイル用ドロップダウンメニュー (Hidden on desktop) --}}
+    <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="md:hidden bg-blue-800 border-t border-blue-700 shadow-md">
+        <div class="pt-2 pb-3 space-y-1">
+            <a href="{{ url('/') }}" class="block pl-3 pr-4 py-2 text-base font-medium text-white hover:bg-blue-700 hover:border-l-4 hover:border-white transition duration-150 ease-in-out"><i class="fas fa-home mr-2"></i>ホーム</a>
+            <a href="#" class="block pl-3 pr-4 py-2 text-base font-medium text-white hover:bg-blue-700 hover:border-l-4 hover:border-white transition duration-150 ease-in-out"><i class="fas fa-cogs mr-2"></i>サービス</a>
+            <a href="{{ url('/about') }}" class="block pl-3 pr-4 py-2 text-base font-medium text-white hover:bg-blue-700 hover:border-l-4 hover:border-white transition duration-150 ease-in-out"><i class="fas fa-info-circle mr-2"></i>会社概要</a>
+            <a href="{{ url('/contact') }}" class="block pl-3 pr-4 py-2 text-base font-medium text-white hover:bg-blue-700 hover:border-l-4 hover:border-white transition duration-150 ease-in-out"><i class="fas fa-envelope mr-2"></i>お問い合わせ</a>
+            @auth
+                <a href="{{ route('profile.edit') }}" class="block pl-3 pr-4 py-2 text-base font-medium text-white hover:bg-blue-700 hover:border-l-4 hover:border-white transition duration-150 ease-in-out"><i class="fas fa-user-circle mr-2"></i>プロフィール</a>
+                <a href="{{ url('/dashboard') }}" class="block pl-3 pr-4 py-2 text-base font-medium text-white hover:bg-blue-700 hover:border-l-4 hover:border-white transition duration-150 ease-in-out"><i class="fas fa-chart-line mr-2"></i>ダッシュボード</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="block pl-3 pr-4 py-2 text-base font-medium text-white hover:bg-blue-700 hover:border-l-4 hover:border-white transition duration-150 ease-in-out"><i class="fas fa-sign-out-alt mr-2"></i>ログアウト</a>
+                </form>
             @else
-                <a href="{{ route('login') }}" class="btn btn-outline-light me-2">ログイン</a>
-                <a href="{{ route('register') }}" class="btn btn-primary">登録</a>
+                <a href="{{ route('login') }}" class="block pl-3 pr-4 py-2 text-base font-medium text-white hover:bg-blue-700 hover:border-l-4 hover:border-white transition duration-150 ease-in-out">ログイン</a>
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="block pl-3 pr-4 py-2 text-base font-medium text-white hover:bg-blue-700 hover:border-l-4 hover:border-white transition duration-150 ease-in-out">新規登録</a>
+                @endif
             @endauth
         </div>
     </div>
