@@ -1,5 +1,11 @@
+# docker/php/Dockerfile
+
 # ベースとなるPHPイメージ
 FROM php:8.3-fpm-alpine
+
+# bash をインストールする行を追加します
+# Alpine Linux は 'apk' パッケージマネージャーを使用します
+RUN apk add --no-cache bash
 
 # コンテナのタイムゾーンを設定
 ARG TIMEZONE=Asia/Tokyo

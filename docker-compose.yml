@@ -10,6 +10,8 @@ services:
       - .:/var/www/html # ★★★ ここをコメントアウト解除しました！これでホストのファイルがコンテナにマウントされます。 ★★★
       - ./wordpress:/var/www/wordpress # WordPressのファイルをPHPコンテナにもマウント
       - ./.env.local:/var/www/html/.env # ホストの.env.localをコンテナの.envとしてマウント
+    ports: # ★★★ ここにVite開発サーバーのポート設定を追加します ★★★
+      - "5173:5173" # Vite開発サーバーのポートをホストに公開
     depends_on:
       - db
     env_file:
@@ -74,9 +76,6 @@ services:
       WORDPRESS_ADMIN_USER: "bicstation"
       WORDPRESS_ADMIN_PASSWORD: "1492nabe"
       WORDPRESS_ADMIN_EMAIL: "bicstation@gmail.com"
-      WORDPRESS_DEBUG: true
-      WORDPRESS_DEBUG_LOG: true
-      WORDPRESS_DEBUG_DISPLAY: false
     volumes:
       - ./wordpress:/var/www/html # ローカルの ./wordpress ディレクトリをコンテナのWebルートにマウント
     depends_on:
