@@ -12,7 +12,9 @@
         "laravel/tinker": "^2.10.1",
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.7",
-        "spatie/laravel-permission": "^6.20"
+        "spatie/laravel-feed": "^4.4",
+        "spatie/laravel-permission": "^6.20",
+        "spatie/laravel-sitemap": "^7.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

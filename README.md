@@ -1,5 +1,7 @@
 Dockerで起動する方法
 最初に、行うこと
+filamintのユーザー登録
+php artisan make:filament-user
 
 git pull origin main
 

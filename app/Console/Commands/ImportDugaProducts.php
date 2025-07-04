@@ -3,69 +3,54 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
-use App\Models\Product;
-// use App\Models\RowApiData; // もしrow_api_dataテーブルを使うならこの行も追加
+use App\Jobs\ProcessDugaImport; // 作成したJobクラスをインポート
 
 class ImportDugaProducts extends Command
 {
-    protected $signature = 'import:duga-products';
-    protected $description = 'Import products from the DUGA API.';
+    /**
+     * コンソールコマンドの署名。
+     * このコマンドを呼び出す際に使用する名前と、オプションを定義します。
+     *
+     * @var string
+     */
+    protected $signature = 'import:duga-products 
+                            {--limit=100 : 1回のAPIリクエストで取得するアイテム数 (最大100)} 
+                            {--batch=1000 : DBに一括保存するアイテムのバッチサイズ} 
+                            {--max-items= : 取得・処理するアイテムの最大総数 (テスト/部分インポート用、nullで無制限)}';
 
-    public function handle()
+    /**
+     * コンソールコマンドの説明。
+     *
+     * @var string
+     */
+    protected $description = 'DUGA APIから商品をインポートするジョブをディスパッチします。';
+
+    /**
+     * コンソールコマンドを実行します。
+     *
+     * @return int
+     */
+    public function handle(): int
     {
-        $this->info('Starting DUGA product import...');
-
-        $apiUrl = env('DUGA_API_URL'); // .envファイルからURLを取得
-        $apiKey = env('DUGA_API_KEY'); // .envファイルからAPIキーを取得 (もし必要なら)
-
-        if (!$apiUrl) {
-            $this->error('DUGA_API_URL is not set in .env file.');
-            return;
+        // limit オプションのバリデーションと調整
+        $limit = (int) $this->option('limit');
+        if ($limit > 100 || $limit < 1) {
+            $this->warn('The --limit option must be between 1 and 100. Setting to 100.');
+            $limit = 100;
         }
 
-        try {
-            $response = Http::withHeaders([
-                // DUGAのAPIに合わせたヘッダーや認証情報を追加
-                // 例: 'Authorization' => 'Bearer ' . $apiKey,
-                // 例: 'X-DUGA-Key' => $apiKey,
-            ])->get($apiUrl); // GETリクエスト
+        // batch オプションの取得
+        $batchSize = (int) $this->option('batch');
 
-            if ($response->successful()) {
-                $productsData = $response->json();
+        // max-items オプションの取得 (指定がなければnull)
+        $maxItems = $this->option('max-items') ? (int) $this->option('max-items') : null;
 
-                if (is_array($productsData)) {
-                    foreach ($productsData as $productItem) {
-                        $externalId = $productItem['id'] ?? null; // DUGA APIのレスポンスに合わせてキー名を調整
+        // ProcessDugaImport Jobをキューにディスパッチ
+        ProcessDugaImport::dispatch($limit, $batchSize, $maxItems);
 
-                        if (!$externalId) {
-                            $this->warn('Skipping DUGA product with no external ID: ' . json_encode($productItem));
-                            continue;
-                        }
-
-                        Product::updateOrCreate(
-                            ['external_id' => 'duga_' . $externalId], // 衝突を避けるためプレフィックスを付ける
-                            [
-                                'name' => $productItem['name'] ?? 'No Name',
-                                'description' => $productItem['description'] ?? null,
-                                'price' => $productItem['price'] ?? null,
-                                'image_url' => $productItem['image_url'] ?? null,
-                                // ★DUGAのAPIレスポンスに合わせて他のカラムをマッピング
-                                // 例: 'source_asp' => 'DUGA',
-                            ]
-                        );
-                        $this->info("DUGA Product '{$productItem['name']}' (External ID: {$externalId}) imported/updated.");
-                    }
-                    $this->info('DUGA product import completed successfully.');
-                } else {
-                    $this->error('DUGA API response is not a valid array of products. Response: ' . $response->body());
-                }
-            } else {
-                $this->error('Failed to fetch data from DUGA API. Status: ' . $response->status());
-                $this->error('Response body: ' . $response->body());
-            }
-        } catch (\Exception $e) {
-            $this->error('An error occurred during DUGA API import: ' . $e->getMessage());
-        }
+        $this->info('DUGA商品インポートジョブがキューにディスパッチされました。');
+        $this->info('バックグラウンドでジョブを処理するには、`php artisan queue:work`を実行してください。');
+        
+        return self::SUCCESS; // 成功ステータスを返す
     }
 }

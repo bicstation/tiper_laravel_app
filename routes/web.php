@@ -1,19 +1,31 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\ProductFeedController; // ★この行を追加します
+use Illuminate\Support\Facades\Auth;
 
-// ルートディレクトリへのアクセスでdashboardを表示
-Route::get('/', function () {
-    // ログイン状態に応じて表示を切り替える例
-    if (Auth::check()) {
-        return view('dashboard');
-    }
-    // 未ログインの場合はウェルカムページなど、任意のビューを表示
-    // 今回はログインしていなくてもdashboardを表示する例にします
-    return view('dashboard');
-})->name('home');
+// ルートディレクトリへのアクセスで商品一覧を表示
+// 既存のトップページルートはコメントアウトまたは削除し、以下を追加します
+Route::get('/', [ProductController::class, 'index'])->name('products.index');
 
-// ダッシュボードページ
+// ★★★ 個別商品詳細ページへのルート（前回の追加分） ★★★
+// 例: /products/AB001 のようなURLでアクセスできるようになります
+Route::get('/products/{productid}', [ProductController::class, 'show'])->name('products.show');
+// ★★★ ここまで ★★★
+
+// ★★★ サイトマップのルート（前回の追加分） ★★★
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.xml');
+// ★★★ ここまで ★★★
+
+// ★★★ ここからRSSフィードのルートを追加します ★★★
+Route::get('/feed/products', function () {
+    return app('feed')->get('products');
+})->name('feed.products');
+// ★★★ ここまで追加 ★★★
+
+// ダッシュボードページ (これは残しておきます)
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -48,6 +60,7 @@ Route::middleware('guest')->group(function () {
     Route::get('login', function () { return view('auth.login'); })->name('login');
     Route::get('register', function () { return view('auth.register'); })->name('register');
 });
+// Authファサードを使用しているので、use Illuminate\Support\Facades\Auth; が必要です
 Route::post('logout', function () { Auth::logout(); return redirect('/'); })->name('logout');
 
 
@@ -70,9 +83,9 @@ Route::middleware('auth')->group(function () {
 // @extends('layouts.app')
 // @section('content')
 // <div class="container mx-auto px-4 py-8">
-//     <div class="bg-white shadow-xl rounded-lg p-6 lg:p-8">
-//         <h1 class="text-3xl font-bold mb-4">会社概要</h1>
-//         <p>このページは会社概要です。</p>
-//     </div>
+//      <div class="bg-white shadow-xl rounded-lg p-6 lg:p-8">
+//          <h1 class="text-3xl font-bold mb-4">会社概要</h1>
+//          <p>このページは会社概要です。</p>
+//      </div>
 // </div>
 // @endsection
