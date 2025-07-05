@@ -19,12 +19,6 @@ Route::get('/products/{productid}', [ProductController::class, 'show'])->name('p
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.xml');
 // ★★★ ここまで ★★★
 
-// ★★★ ここからRSSフィードのルートを追加します ★★★
-Route::get('/feed/products', function () {
-    return app('feed')->get('products');
-})->name('feed.products');
-// ★★★ ここまで追加 ★★★
-
 // ダッシュボードページ (これは残しておきます)
 Route::get('/dashboard', function () {
     return view('dashboard');

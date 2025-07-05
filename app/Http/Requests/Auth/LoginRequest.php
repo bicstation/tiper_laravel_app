@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+// ★追加: FilamentUser インターフェースのパスをインポート
+use Filament\Models\Contracts\FilamentUser; 
+// ★追加: User モデルのパスをインポート（厳密には不要な場合もありますが、念のため）
+use App\Models\User; 
 
 class LoginRequest extends FormRequest
 {
@@ -50,6 +54,25 @@ class LoginRequest extends FormRequest
         }
 
         RateLimiter::clear($this->throttleKey());
+    }
+
+    /**
+     * ★追加: 認証後のリダイレクト先を決定するメソッド
+     */
+    public function redirectTo(): string
+    {
+        // 現在認証されているユーザーを取得
+        $user = Auth::user();
+
+        // ユーザーが FilamentUser インターフェースを実装しており、
+        // かつ canAccessFilament() が true を返す場合、/admin にリダイレクト
+        // FilamentUser インターフェースの存在を確認し、かつ canAccessFilament() が存在することを確認
+        if ($user instanceof FilamentUser && $user->canAccessFilament()) {
+            return '/admin';
+        }
+
+        // それ以外のユーザーは /dashboard にリダイレクト
+        return '/dashboard';
     }
 
     /**

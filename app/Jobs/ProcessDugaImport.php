@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,7 +15,7 @@ use App\Models\ProductCategory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
-use Exception;
+use Exception; // Exceptionクラスのuseを追加
 
 class ProcessDugaImport implements ShouldQueue
 {
@@ -33,7 +32,7 @@ class ProcessDugaImport implements ShouldQueue
     const DUGA_ADULT = 1;
     const DUGA_SORT = 'favorite';
 
-    public function __construct(int $limit = 100, int $batchSize = 1000, ?int $maxItems = null)
+    public function __construct(int $limit = 100, int $batchSize = 500, ?int $maxItems = null)
     {
         $this->limit = min($limit, 100); 
         $this->batchSize = $batchSize;
@@ -102,11 +101,24 @@ class ProcessDugaImport implements ShouldQueue
                 Log::debug('DUGA API Full Request URL: ' . $response->effectiveUri());
                 Log::debug('DUGA API Request Parameters sent: ' . json_encode($params, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
                 Log::debug('DUGA API Response Status: ' . $response->status()); 
+                
+                // ★追加: レスポンスの生の内容をログに出力★
+                Log::debug('DUGA API Raw Response Body: ' . $response->body());
 
                 if ($response->successful()) {
                     $responseData = $response->json();
                     
-                    Log::debug('DUGA API Response Body: ' . json_encode($responseData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+                    // ★追加: JSONデコードのエラーを確認する★
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        $errorMsg = json_last_error_msg();
+                        Log::error("JSON Decode Error: {$errorMsg}. Raw Response: " . $response->body());
+                        // エラーが発生した場合は、このバッチの処理をスキップし、ループを抜ける
+                        break; 
+                    }
+
+                    Log::debug('DUGA API Response Decoded (json_encode): ' . json_encode($responseData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+                    // var_exportも追加。より詳細な構造をログ出力したい場合
+                    // Log::debug('DUGA API Response Decoded (var_export): ' . var_export($responseData, true));
 
                     $rawItems = $responseData['items'] ?? [];
                     $items = [];
@@ -120,7 +132,7 @@ class ProcessDugaImport implements ShouldQueue
 
                     $currentBatchCount = count($items);
                     if ($currentBatchCount === 0) {
-                        Log::info('No more products found from API. Finishing import.');
+                        Log::info('No more products found from API or "items" array is empty. Finishing import.');
                         break;
                     }
 
@@ -160,29 +172,48 @@ class ProcessDugaImport implements ShouldQueue
                             }
                         }
 
-                        $posterImage = $productItem['posterimage'] ?? [];
-                        $jacketImage = $productItem['jacketimage'] ?? [];
-                        $thumbnailImage = $productItem['thumbnail'] ?? [];
+                        // --- 画像URLの抽出ロジックの修正ここから ---
+                        $posterImageUrl = null;
+                        if (isset($productItem['posterimage']) && is_array($productItem['posterimage']) && !empty($productItem['posterimage'][0])) {
+                            $firstPoster = $productItem['posterimage'][0];
+                            $posterImageUrl = $firstPoster['large'] ?? $firstPoster['midium'] ?? $firstPoster['small'] ?? null;
+                        }
 
-                        $posterImageUrl = $posterImage['large'] ?? $posterImage['mid'] ?? $posterImage['small'] ?? null;
-                        $jacketImageUrl = $jacketImage['large'] ?? $jacketImage['mid'] ?? $jacketImage['small'] ?? null;
-                        $thumbnailMainUrl = $thumbnailImage['large'] ?? $thumbnailImage['mid'] ?? $thumbnailImage['small'] ?? null;
+                        $jacketImageUrl = null;
+                        if (isset($productItem['jacketimage']) && is_array($productItem['jacketimage']) && !empty($productItem['jacketimage'][0])) {
+                            $firstJacket = $productItem['jacketimage'][0];
+                            $jacketImageUrl = $firstJacket['large'] ?? $firstJacket['midium'] ?? $firstJacket['small'] ?? null;
+                        }
 
-                        $sampleMovieUrl = $productItem['samplemovie']['url'] ?? null;
-                        $sampleMovieCapture = $productItem['samplemovie']['capture'] ?? null;
+                        $thumbnailMainUrl = null;
+                        if (isset($productItem['thumbnail']) && is_array($productItem['thumbnail']) && !empty($productItem['thumbnail'][0])) {
+                            $firstThumbnail = $productItem['thumbnail'][0];
+                            $thumbnailMainUrl = $firstThumbnail['image'] ?? null; // thumbnailは'image'キー
+                        }
+
+                        // samplemovie の抽出も修正
+                        $sampleMovieUrl = null;
+                        $sampleMovieCapture = null;
+                        if (isset($productItem['samplemovie']) && is_array($productItem['samplemovie']) && !empty($productItem['samplemovie'][0]) && isset($productItem['samplemovie'][0]['midium'])) {
+                            $sampleMovieData = $productItem['samplemovie'][0]['midium'];
+                            $sampleMovieUrl = $sampleMovieData['movie'] ?? null;
+                            $sampleMovieCapture = $sampleMovieData['capture'] ?? null;
+                        }
+                        // --- 画像URLの抽出ロジックの修正ここまで ---
                         
-                        $labelId = $productItem['label']['id'] ?? null;
-                        $labelName = $productItem['label']['name'] ?? null;
+                        $labelId = $productItem['label'][0]['id'] ?? null; // labelも配列になっている可能性を考慮
+                        $labelName = $productItem['label'][0]['name'] ?? null; // labelも配列になっている可能性を考慮
 
-                        $seriesId = $productItem['series']['id'] ?? null;
-                        $seriesName = $productItem['series']['name'] ?? null;
+                        $seriesId = $productItem['series'][0]['id'] ?? null; // seriesも配列になっている可能性を考慮
+                        $seriesName = $productItem['series'][0]['name'] ?? null; // seriesも配列になっている可能性を考慮
 
-                        $rankingTotal = $productItem['ranking']['total'] ?? null;
+                        $rankingTotal = $productItem['ranking'][0]['total'] ?? null; // rankingも配列になっている可能性を考慮
 
+                        // reviewはJSON例にないので、そのままにしておきますが、もしreviewも配列だったら同様の修正が必要
                         $reviewRating = $productItem['review']['average'] ?? null;
                         $reviewCount = $productItem['review']['count'] ?? null;
 
-                        $mylistTotal = $productItem['mylist']['total'] ?? null;
+                        $mylistTotal = $productItem['mylist'][0]['total'] ?? null; // mylistも配列になっている可能性を考慮
 
                         $processedProductsBuffer[] = [
                             'productid' => (string)$productId,
@@ -217,6 +248,7 @@ class ProcessDugaImport implements ShouldQueue
 
                         if (isset($productItem['category']['data'])) {
                             $categoriesData = $productItem['category']['data'];
+                            // category.data が単一オブジェクトの場合も配列として扱えるようにする
                             if (!isset($categoriesData[0]) && is_array($categoriesData)) {
                                 $categoriesData = [$categoriesData];
                             }
@@ -246,7 +278,6 @@ class ProcessDugaImport implements ShouldQueue
                         $totalProductsFetched++;
 
                         if (count($processedProductsBuffer) >= $batchSize) {
-                            // categoriesToProcess を array_values() で変数に代入してから渡す
                             $categoriesToSave = array_values($categoriesToProcess);
                             $this->saveBuffers($rawProductsBuffer, $processedProductsBuffer, $categoriesToSave, $productCategoriesToProcess, $batchSize);
                             $totalProductsSaved += count($rawProductsBuffer);
@@ -261,7 +292,7 @@ class ProcessDugaImport implements ShouldQueue
                     Log::info("Fetched {$currentBatchCount} items. Total fetched so far: {$totalProductsFetched}.");
 
                 } else {
-                    Log::error('Failed to fetch data from DUGA API.', [
+                    Log::error('Failed to fetch data from DUGA API. Status code was not successful.', [
                         'status' => $response->status(), 
                         'body' => $response->body(), 
                         'offset' => $offset, 
@@ -294,7 +325,6 @@ class ProcessDugaImport implements ShouldQueue
 
         if (!empty($rawProductsBuffer)) {
             Log::info("Saving remaining buffer items (count: " . count($rawProductsBuffer) . ") to MySQL.");
-            // ここも同様に変数に代入してから渡す
             $categoriesToSave = array_values($categoriesToProcess);
             $this->saveBuffers($rawProductsBuffer, $processedProductsBuffer, $categoriesToSave, $productCategoriesToProcess, count($rawProductsBuffer));
             $totalProductsSaved += count($rawProductsBuffer);
@@ -343,7 +373,7 @@ class ProcessDugaImport implements ShouldQueue
 
                 if (!empty($categoriesBuffer)) {
                     Category::upsert(
-                        $categoriesBuffer, // $categoriesToUpsert は不要になったため直接 $categoriesBuffer を使用
+                        $categoriesBuffer,
                         ['id'],
                         ['name', 'updated_at']
                     );
@@ -351,7 +381,7 @@ class ProcessDugaImport implements ShouldQueue
 
                 if (!empty($productCategoriesBuffer)) {
                     ProductCategory::upsert(
-                        $productCategoriesToProcess,
+                        $productCategoriesBuffer,
                         ['product_external_id', 'category_external_id'],
                         ['source_asp', 'updated_at']
                     );

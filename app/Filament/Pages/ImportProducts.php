@@ -9,6 +9,7 @@ use Filament\Notifications\Notification; // 通知用
 use Filament\Forms\Components\TextInput; // フォームコンポーネント
 use Filament\Forms\Concerns\InteractsWithForms; // フォーム用トレイト
 use Filament\Forms\Contracts\HasForms; // フォーム用インターフェース
+use Illuminate\Support\Facades\Log; 
 
 class ImportProducts extends Page implements HasForms
 {
@@ -22,7 +23,7 @@ class ImportProducts extends Page implements HasForms
 
     // フォームの状態を保持するプロパティ
     public int $limit = 100;
-    public int $batchSize = 1000;
+    public int $batchSize = 500; // ★ここを1000から500に変更
     public ?int $maxItems = null;
 
     // ページロード時にフォームを初期化
