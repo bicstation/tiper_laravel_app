@@ -44,7 +44,6 @@
                         <p class="text-base font-bold text-gray-800 dark:text-gray-200 mb-4">価格: {{ $product->price_text ?? '不明' }}</p>
                         
                         <div class="mt-auto flex flex-wrap justify-center gap-2"> {{-- ボタンを横並びにするためのコンテナ --}}
-                            {{-- ★★★ この部分を変更しました ★★★ --}}
                             {{-- 「公式サイトを見る」ボタンをアフィリエイトリンクに。affiliateurlがなければurlをフォールバック。 --}}
                             @if ($product->affiliateurl)
                                 <a href="{{ $product->affiliateurl }}" target="_blank" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 text-sm">
@@ -56,13 +55,11 @@
                                 </a>
                             @endif
 
-                            {{-- 「個別ページ」ボタンは変更なし --}}
-                            <a href="{{ route('products.show', ['productid' => $product->productid]) }}" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-300 text-sm">
+                            {{-- 「個別ページ」ボタンを修正しました --}}
+                            <a href="{{ route('products.show', $product) }}" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-300 text-sm">
                                 個別ページ
                             </a>
                         </div>
-                        {{-- ★★★ 変更ここまで ★★★ --}}
-
                     </div>
                 @empty
                     <p class="text-gray-600 dark:text-gray-300 text-center col-span-full">商品が見つかりませんでした。</p>

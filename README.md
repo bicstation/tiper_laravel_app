@@ -87,6 +87,7 @@ npm install
 b. Vite開発サーバーの起動
 Bash
 
+docker-compose up -d --build
 npm run dev
 注意: このコマンドを実行したターミナルは、開発中は開いたままにしておく必要があります。
 

@@ -2,41 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product; // Product モデルを使用することを宣言
-use Illuminate\Http\Request; // Request クラスを使用する場合に必要ですが、今回は必須ではありません
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    /**
-     * トップページに商品一覧を表示する
-     */
     public function index()
     {
-        // 商品データをデータベースから取得
-        // 例: ページネーションを使って1ページあたり15件表示し、リリース日で新しい順にソート
         $products = Product::orderBy('releasedate', 'desc')
-                           ->paginate(15);
-
-        // 取得した商品をビューに渡して表示
+                            ->paginate(15);
         return view('products.index', compact('products'));
     }
 
-    // ★★★ ここから追加します ★★★
-    /**
-     * 個別商品詳細ページを表示する
-     *
-     * @param string $productid DUGAのproductid (URLから渡されるID)
-     * @return \Illuminate\View\View
-     */
     public function show($productid)
     {
-        // データベースから指定されたproductidの商品を取得します。
-        // firstOrFail() は、商品が見つからなかった場合に自動的に404エラーページを表示します。
         $product = Product::where('productid', $productid)->firstOrFail();
 
-        // 取得した商品データを 'products.show' ビューに渡して表示します。
-        // 'products.show' は resources/views/products/show.blade.php を指します。
-        return view('products.show', compact('product'));
+        // --- 前の作品を取得（メーカー内での前後ナビゲーション） ---
+        $previousProduct = Product::where('makerid', $product->makerid)
+            ->where(function ($query) use ($product) {
+                $query->where('releasedate', '<', $product->releasedate)
+                      ->orWhere(function ($query) use ($product) {
+                          $query->where('releasedate', $product->releasedate)
+                                ->where('productid', '<', $product->productid);
+                      });
+            })
+            ->orderBy('releasedate', 'desc')
+            ->orderBy('productid', 'desc')
+            ->first();
+
+        // --- 次の作品を取得（メーカー内での前後ナビゲーション） ---
+        $nextProduct = Product::where('makerid', $product->makerid)
+            ->where(function ($query) use ($product) {
+                $query->where('releasedate', '>', $product->releasedate)
+                      ->orWhere(function ($query) use ($product) {
+                          $query->where('releasedate', $product->releasedate)
+                                ->where('productid', '>', $product->productid);
+                      });
+            })
+            ->orderBy('releasedate', 'asc')
+            ->orderBy('productid', 'asc')
+            ->first();
+
+        // --- 同じカテゴリの関連作品を取得 ---
+        $relatedProductsByCategory = collect(); // 初期化
+        if ($product->categories->isNotEmpty()) {
+            $categoryIds = $product->categories->pluck('id')->toArray();
+            $relatedProductsByCategory = Product::whereHas('categories', function ($query) use ($categoryIds) {
+                                            $query->whereIn('categories.id', $categoryIds);
+                                        })
+                                        ->where('id', '!=', $product->id) // 現在の作品を除外
+                                        ->inRandomOrder()
+                                        ->limit(4)
+                                        ->get();
+        }
+
+        // --- 同じシリーズの関連作品を取得 ---
+        $relatedProductsBySeries = collect(); // 初期化
+        // series_id が存在し、かつ NULL や空文字列ではない場合
+        if (!empty($product->series_id)) {
+            $relatedProductsBySeries = Product::where('series_id', $product->series_id)
+                                          ->where('id', '!=', $product->id) // 現在の作品を除外
+                                          ->inRandomOrder() // ランダムな順序で取得
+                                          ->limit(4) // 4件に限定
+                                          ->get();
+        }
+
+
+        // ビューにデータを渡す
+        return view('products.show', compact('product', 'previousProduct', 'nextProduct', 'relatedProductsByCategory', 'relatedProductsBySeries'));
     }
-    // ★★★ ここまで追加 ★★★
 }

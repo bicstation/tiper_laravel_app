@@ -5,7 +5,7 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 // あなたの新しいコマンドクラスをここにインポートします
-use App\Console\Commands\ImportDugaProducts; // この行を追加または確認
+use App\Console\Commands\ProcessDugaImportCommand; // ここを修正しました
 
 class Kernel extends ConsoleKernel
 {
@@ -16,7 +16,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         // ここに新しいコマンドクラスを追加します
-        ImportDugaProducts::class, // この行を追加または確認
+        ProcessDugaImportCommand::class, // ここを修正しました
     ];
 
     /**
@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // スケジュール化されたタスクが必要な場合にここに記述します
-        // 例: $schedule->command('import:duga-products --limit=100 --batch=100')->daily();
+        // 例: $schedule->command('process:duga-import --limit=100 --batchSize=500')->daily();
     }
 
     /**
